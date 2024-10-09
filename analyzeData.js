@@ -11,11 +11,13 @@ let analysisDetails = {
 
 function analyzeData() {
     const inputValues = getInputValues();
-    analysisDetails.jeongbae = analyzeMatches(inputValues, 'jeongbae');
-    analysisDetails.jeongbaeMu = analyzeMatches(inputValues, 'jeongbaeMu');
-    analysisDetails.yeokbae = analyzeMatches(inputValues, 'yeokbae');
-    analysisDetails.yeokbaeMu = analyzeMatches(inputValues, 'yeokbaeMu');
-    analysisDetails.allMatchSample = analyzeMatches(inputValues, 'allMatch');
+    const detailedMargins = getDetailedMargins();
+
+    analysisDetails.jeongbae = analyzeMatches(inputValues, 'jeongbae', false, detailedMargins.jeongbae);
+    analysisDetails.jeongbaeMu = analyzeMatches(inputValues, 'jeongbaeMu', false, detailedMargins.jeongbae);
+    analysisDetails.yeokbae = analyzeMatches(inputValues, 'yeokbae', false, detailedMargins.yeokbae);
+    analysisDetails.yeokbaeMu = analyzeMatches(inputValues, 'yeokbaeMu', false, detailedMargins.yeokbae);
+    analysisDetails.allMatchSample = analyzeMatches(inputValues, 'allMatch', false, detailedMargins.match);
     
     updateResultsTable('정배 표본', analysisDetails.jeongbae);
     updateResultsTable('정배+무 표본', analysisDetails.jeongbaeMu);
@@ -24,9 +26,9 @@ function analyzeData() {
     updateResultsTable('승(무)패 일치 표본', analysisDetails.allMatchSample);
 
     if (currentLeague) {
-        analysisDetails.selectedLeagueJeongbaeMu = analyzeMatches(inputValues, 'jeongbaeMu', true);
-        analysisDetails.selectedLeagueYeokbaeMu = analyzeMatches(inputValues, 'yeokbaeMu', true);
-        analysisDetails.currentLeagueMatchSample = analyzeMatches(inputValues, 'currentLeagueMatch', true);
+        analysisDetails.selectedLeagueJeongbaeMu = analyzeMatches(inputValues, 'jeongbaeMu', true, detailedMargins.jeongbae);
+        analysisDetails.selectedLeagueYeokbaeMu = analyzeMatches(inputValues, 'yeokbaeMu', true, detailedMargins.yeokbae);
+        analysisDetails.currentLeagueMatchSample = analyzeMatches(inputValues, 'currentLeagueMatch', true, detailedMargins.match);
         updateResultsTable('해당리그 정배+무 표본', analysisDetails.selectedLeagueJeongbaeMu);
         updateResultsTable('해당리그 역배+무 표본', analysisDetails.selectedLeagueYeokbaeMu);
         updateResultsTable('당리그 승무패 일치 표본', analysisDetails.currentLeagueMatchSample);
@@ -42,12 +44,31 @@ function getInputValues() {
         win: parseFloat(document.querySelector('input[name="win"]').value),
         draw: parseFloat(document.querySelector('input[name="draw"]').value),
         lose: parseFloat(document.querySelector('input[name="lose"]').value),
-        margin: parseFloat(document.querySelector('input[name="margin"]').value)
     };
 }
 
-function analyzeMatches(inputValues, analysisType, selectedLeagueOnly = false) {
-    const { win, draw, lose, margin } = inputValues;
+function getDetailedMargins() {
+    return {
+        jeongbae: {
+            win: parseFloat(document.getElementById('jeongbaeWinMargin').value) || 0,
+            draw: parseFloat(document.getElementById('jeongbaeDrawMargin').value) || 0,
+            lose: parseFloat(document.getElementById('jeongbaeLoseMargin').value) || 0
+        },
+        yeokbae: {
+            win: parseFloat(document.getElementById('yeokbaeWinMargin').value) || 0,
+            draw: parseFloat(document.getElementById('yeokbaeDrawMargin').value) || 0,
+            lose: parseFloat(document.getElementById('yeokbaeLoseMargin').value) || 0
+        },
+        match: {
+            win: parseFloat(document.getElementById('matchWinMargin').value) || 0,
+            draw: parseFloat(document.getElementById('matchDrawMargin').value) || 0,
+            lose: parseFloat(document.getElementById('matchLoseMargin').value) || 0
+        }
+    };
+}
+
+function analyzeMatches(inputValues, analysisType, selectedLeagueOnly = false, detailedMargin) {
+    const { win, draw, lose } = inputValues;
     const results = { "핸승": 0, "핸무": 0, "무": 0, "역": 0 };
     const details = [];
 
@@ -72,7 +93,7 @@ function analyzeMatches(inputValues, analysisType, selectedLeagueOnly = false) {
             jsonData.slice(1).forEach(row => {
                 const matchData = extractMatchData(row, columnIndices);
                 
-                if (isMatchEligible(matchData, win, draw, lose, margin, analysisType)) {
+                if (isMatchEligible(matchData, win, draw, lose, detailedMargin, analysisType)) {
                     const result = calculateResult(matchData, analysisType);
                     results[result]++;
                     details.push({ ...matchData, League: sheetName, Result: result });
@@ -106,24 +127,24 @@ function extractMatchData(row, columnIndices) {
     };
 }
 
-function isMatchEligible(matchData, win, draw, lose, margin, analysisType) {
+function isMatchEligible(matchData, win, draw, lose, detailedMargin, analysisType) {
     const { AvgH, AvgD, AvgA } = matchData;
     const jeongbae = Math.min(win, lose);
     const yeokbae = Math.max(win, lose);
 
     switch (analysisType) {
         case 'jeongbae':
-            return Math.abs(AvgH - jeongbae) <= margin || Math.abs(AvgA - jeongbae) <= margin;
+            return Math.abs(AvgH - jeongbae) <= detailedMargin.win || Math.abs(AvgA - jeongbae) <= detailedMargin.lose;
         case 'jeongbaeMu':
-            return (Math.abs(AvgH - jeongbae) <= margin || Math.abs(AvgA - jeongbae) <= margin) && Math.abs(AvgD - draw) <= margin;
+            return (Math.abs(AvgH - jeongbae) <= detailedMargin.win || Math.abs(AvgA - jeongbae) <= detailedMargin.lose) && Math.abs(AvgD - draw) <= detailedMargin.draw;
         case 'yeokbae':
-            return Math.abs(AvgH - yeokbae) <= margin || Math.abs(AvgA - yeokbae) <= margin;
+            return Math.abs(AvgH - yeokbae) <= detailedMargin.win || Math.abs(AvgA - yeokbae) <= detailedMargin.lose;
         case 'yeokbaeMu':
-            return (Math.abs(AvgH - yeokbae) <= margin || Math.abs(AvgA - yeokbae) <= margin) && Math.abs(AvgD - draw) <= margin;
+            return (Math.abs(AvgH - yeokbae) <= detailedMargin.win || Math.abs(AvgA - yeokbae) <= detailedMargin.lose) && Math.abs(AvgD - draw) <= detailedMargin.draw;
         case 'allMatch':
         case 'currentLeagueMatch':
-            return (Math.abs(AvgH - win) <= margin && Math.abs(AvgD - draw) <= margin && Math.abs(AvgA - lose) <= margin) ||
-                   (Math.abs(AvgH - lose) <= margin && Math.abs(AvgD - draw) <= margin && Math.abs(AvgA - win) <= margin);
+            return (Math.abs(AvgH - win) <= detailedMargin.win && Math.abs(AvgD - draw) <= detailedMargin.draw && Math.abs(AvgA - lose) <= detailedMargin.lose) ||
+                   (Math.abs(AvgH - lose) <= detailedMargin.lose && Math.abs(AvgD - draw) <= detailedMargin.draw && Math.abs(AvgA - win) <= detailedMargin.win);
         default:
             return false;
     }
@@ -170,20 +191,7 @@ function decodeExcelDate(excelDate) {
     const date = new Date((excelDate - 25569) * 86400 * 1000);
     return date.toISOString().split('T')[0];
 }
-/*
-function toggleDetails(type) {
-    const detailsRow = document.getElementById(`${type}-details`);
-    const detailsContent = detailsRow.querySelector('.details-content');
-    
-    if (detailsRow.style.display === 'none') {
-        detailsRow.style.display = 'table-row';
-        if (detailsContent.innerHTML === '') {
-            showDetails(type, detailsContent);
-        }
-    } else {
-        detailsRow.style.display = 'none';
-    }
-}*/
+
 
 function showDetails(type) {
     const detailsRow = document.getElementById(`${type}-details`);
@@ -262,7 +270,6 @@ function showDetails(type) {
 function toggleDetails(type) {
     showDetails(type);
 }
-
 // HTML에서 호출할 함수들
 function showJeongbaeDetails() { showDetails('jeongbae'); }
 function showJeongbaeMuDetails() { showDetails('jeongbaeMu'); }

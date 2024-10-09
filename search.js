@@ -132,142 +132,38 @@ function toggleLeagueCheckboxes() {
         leagueToggle.textContent = '리그 선택 ▶';
     }
 }
-function processData() {
-    const requiredColumns = ['Date', 'Time', 'HomeTeam', 'AwayTeam', 'FTHG', 'FTAG', 'FTR', 'AvgH', 'AvgD', 'AvgA'];
 
-    const win = parseFloat(document.querySelector('input[name="win"]').value);
-    const draw = parseFloat(document.querySelector('input[name="draw"]').value);
-    const lose = parseFloat(document.querySelector('input[name="lose"]').value);
-    const margin = parseFloat(document.querySelector('input[name="margin"]').value);
+let detailedMargins = {
+    jeongbae: { win: 0, draw: 0, lose: 0 },
+    yeokbae: { win: 0, draw: 0, lose: 0 },
+    match: { win: 0, draw: 0, lose: 0 }
+};
 
-    let output = '';
-    output += '<div class="results-header">';
-    output += '<h2>검색 결과</h2>';
-    output += '<button onclick="toggleResults()">결과 숨기기</button>';
-    output += '</div>';
-    
-    output += '<div id="allResults">';
-    
-    const leaguesToProcess = currentLeague ? [currentLeague] : selectedLeagues;
+document.addEventListener('DOMContentLoaded', function() {
+    // 기존 이벤트 리스너 유지
 
-    leaguesToProcess.forEach((sheetName) => {
-        const worksheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
-        
-        if (jsonData.length >= 2) {
-            // Find the indices of required columns
-            const headerRow = jsonData[0];
-            const columnIndices = requiredColumns.map(col => headerRow.indexOf(col));
-
-            // Check if all required columns are present
-            if (columnIndices.every(index => index !== -1)) {
-                // Extract and filter data from required columns
-                const extractedData = jsonData.slice(1).filter(row => {
-                    const avgH = parseFloat(row[columnIndices[7]]);
-                    const avgD = parseFloat(row[columnIndices[8]]);
-                    const avgA = parseFloat(row[columnIndices[9]]);
-
-                    return (Math.abs(avgH - win) <= margin &&
-                            Math.abs(avgD - draw) <= margin &&
-                            Math.abs(avgA - lose) <= margin) ||
-                           (Math.abs(avgH - lose) <= margin &&
-                            Math.abs(avgD - draw) <= margin &&
-                            Math.abs(avgA - win) <= margin);
-                }).map(row => {
-                    const extractedRow = columnIndices.map((index, colIndex) => {
-                        if (colIndex === 0) { // Date column
-                            const dateCell = XLSX.utils.encode_cell({c: index, r: row.length - 1});
-                            const dateCellValue = worksheet[dateCell];
-                            if (dateCellValue) {
-                                const dateValue = XLSX.SSF.parse_date_code(dateCellValue.v);
-                                return `${dateValue.y}-${String(dateValue.m).padStart(2, '0')}-${String(dateValue.d).padStart(2, '0')}`;
-                            }
-                            return 'Date not found';
-                        } else if (colIndex === 1) { // Time column
-                            const timeCell = XLSX.utils.encode_cell({c: index, r: row.length - 1});
-                            const timeCellValue = worksheet[timeCell];
-                            if (timeCellValue) {
-                                const timeValue = XLSX.SSF.parse_date_code(timeCellValue.v);
-                                return `${String(timeValue.H).padStart(2, '0')}:${String(timeValue.M).padStart(2, '0')}`;
-                            }
-                            return 'Time not found';
-                        }
-                        return row[index];
-                    });
-
-                    const avgH = parseFloat(extractedRow[7]);
-                    const avgA = parseFloat(extractedRow[9]);
-                    const fthg = parseInt(extractedRow[4]);
-                    const ftag = parseInt(extractedRow[5]);
-                    
-                    let result;
-                    if (avgH < avgA) {
-                        const chongbae = fthg;
-                        const yeokbae = ftag + 1;
-                        if (chongbae === yeokbae) {
-                            result = "핸무";
-                        } else if (chongbae > yeokbae) {
-                            result = "핸승";
-                        } else if (fthg === ftag) {
-                            result = "무";
-                        } else {
-                            result = "역";
-                        }
-                    } else {
-                        const chongbae = ftag;
-                        const yeokbae = fthg + 1;
-                        if (chongbae === yeokbae) {
-                            result = "핸무";
-                        } else if (chongbae > yeokbae) {
-                            result = "핸승";
-                        } else if (fthg === ftag) {
-                            result = "무";
-                        } else {
-                            result = "역";
-                        }
-                    }
-                    extractedRow.push(result);
-                    return extractedRow;
-                });
-
-                if (extractedData.length > 0) {
-                    output += `<div class="league-container">`;
-                    output += `<h3>League: ${sheetName}</h3>`;
-
-                    // Create table
-                    output += '<table class="excel-table">';
-                    
-                    // Add header row
-                    output += '<tr>';
-                    requiredColumns.forEach(col => {
-                        output += `<th>${col}</th>`;
-                    });
-                    output += '<th>결과</th>';
-                    output += '</tr>';
-
-                    // Add data rows
-                    extractedData.forEach(row => {
-                        output += '<tr>';
-                        row.forEach(cell => {
-                            output += `<td>${cell}</td>`;
-                        });
-                        output += '</tr>';
-                    });
-
-                    output += '</table>';
-                    output += '</div>';
-                }
-            }
-        }
+    document.getElementById('marginSettingsButton').addEventListener('click', function() {
+        const marginSettings = document.getElementById('marginSettings');
+        marginSettings.style.display = marginSettings.style.display === 'none' ? 'block' : 'none';
     });
 
-    output += '</div>'; // Closing allResults div
+    document.getElementById('applyMarginSettings').addEventListener('click', function() {
+        detailedMargins.jeongbae.win = parseFloat(document.getElementById('jeongbaeWinMargin').value) || 0;
+        detailedMargins.jeongbae.draw = parseFloat(document.getElementById('jeongbaeDrawMargin').value) || 0;
+        detailedMargins.jeongbae.lose = parseFloat(document.getElementById('jeongbaeLoseMargin').value) || 0;
+        detailedMargins.yeokbae.win = parseFloat(document.getElementById('yeokbaeWinMargin').value) || 0;
+        detailedMargins.yeokbae.draw = parseFloat(document.getElementById('yeokbaeDrawMargin').value) || 0;
+        detailedMargins.yeokbae.lose = parseFloat(document.getElementById('yeokbaeLoseMargin').value) || 0;
+        detailedMargins.match.win = parseFloat(document.getElementById('matchWinMargin').value) || 0;
+        detailedMargins.match.draw = parseFloat(document.getElementById('matchDrawMargin').value) || 0;
+        detailedMargins.match.lose = parseFloat(document.getElementById('matchLoseMargin').value) || 0;
+        const marginSettings = document.getElementById('marginSettings');
+        marginSettings.style.display = marginSettings.style.display === 'none' ? 'block' : 'none';
+        alert('마진 설정이 적용되었습니다.');
+    });
+});
 
-    if (output === '<div id="allResults"></div>') {
-        output = '<p>No matching data found.</p>';
-    }
-
-    //document.getElementById('dataOutput').innerHTML = output;
+function processData() {
 
     analyzeData();
 }

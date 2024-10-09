@@ -25,7 +25,6 @@
                   <td>승</td>
                   <td>무</td>
                   <td>패</td>
-                  <td>검색 마진</td>
                 </tr>
                 <tr>
                   <td>
@@ -36,11 +35,34 @@
                   <td><input type="number" name="win" step="0.01" value="1.55" required></td>
                   <td><input type="number" name="draw" step="0.01" value="4.58" required></td>
                   <td><input type="number" name="lose" step="0.01" value="5.55" required></td>
-                  <td><input type="number" name="margin" step="0.01" value="0.2" required></td>
                 </tr>
               </table>
             <button type="submit">검색</button>
-        </form>        
+            <button type="button" id="marginSettingsButton">검색 마진 설정</button>
+        </form>     
+        <div id="marginSettings" style="display: none;">
+            <h3>검색 마진 상세 설정</h3>
+            <div>
+                <h4>정배 표본 마진</h4>
+                <input type="number" id="jeongbaeWinMargin" placeholder="승" step="0.01"  value="0.2">
+                <input type="number" id="jeongbaeDrawMargin" placeholder="무" step="0.01" value="0.2">
+                <input type="number" id="jeongbaeLoseMargin" placeholder="패" step="0.01" value="0.2">
+            </div>
+            <div >
+                <h4>역배 표본 마진</h4 >
+                <input type="number" id="yeokbaeWinMargin" placeholder="승" step="0.01"  value="0.2">
+                <input type="number" id="yeokbaeDrawMargin" placeholder="무" step="0.01" value="0.2">
+                <input type="number" id="yeokbaeLoseMargin" placeholder="패" step="0.01" value="0.2">
+            </div>
+            <div>
+                <h4>승무패 일치 마진</h4>
+                <input type="number" id="matchWinMargin" placeholder="승" step="0.01" value="0.2">
+                <input type="number" id="matchDrawMargin" placeholder="무" step="0.01" value="0.2">
+                <input type="number" id="matchLoseMargin" placeholder="패" step="0.01" value="0.2">
+            </div>
+            <button id="applyMarginSettings">적용</button>
+        </div>   
+
         <div id="leagueSelection">
             <h3 class="league-toggle" onclick="toggleLeagueCheckboxes()">리그 선택 ▶</h3>
             <div class="league-checkboxes">
