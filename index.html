@@ -52,73 +52,134 @@
        
         <table class="results-table">
             <tr>
-                <th><span>정배 표본</span> <button class="detail-button" onclick="showJeongbaeDetails()">상세</button></th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <th><span>정배+무 표본</span> <button class="detail-button" onclick="showJeongbaeMuDetails()">상세</button></th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <th><span>역배 표본</span> <button class="detail-button" onclick="showYeokbaeDetails()">상세</button></th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <th><span>역배+무 표본</span> <button class="detail-button" onclick="showYeokbaeMuDetails()">상세</button></th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <th><span>해당리그 정배+무 표본</span> <button class="detail-button" onclick="showSelectedLeagueJeongbaeMuDetails()">상세</button></th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <th><span>해당리그 역배+무 표본</span> <button class="detail-button" onclick="showSelectedLeagueYeokbaeMuDetails()">상세</button></th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <th><span>승(무)패 일치 표본</span> <button class="detail-button" onclick="showAllMatchSampleDetails()">상세</button></th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <th><span>당리그 승무패 일치 표본</span> <button class="detail-button" onclick="showCurrentLeagueMatchSampleDetails()">상세</button></th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-        </table>
-
-        <table class="league-table">
-            <tr>
-                <th>리그</th>
+                <th>표본</th>
                 <th>핸승</th>
                 <th>핸무</th>
                 <th>무</th>
                 <th>역</th>
             </tr>
-            <!-- League data will be dynamically inserted here -->
+            <tr>
+                <th><span>정배 표본</span> <button class="detail-button" onclick="toggleDetails('jeongbae')">상세</button></th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="details-row" id="jeongbae-details" style="display: none;">
+                <td colspan="5">
+                    <div class="details-content">
+                        <div class="summary-container"></div>
+                        <div class="details-container"></div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th><span>정배+무 표본</span> <button class="detail-button" onclick="toggleDetails('jeongbaeMu')">상세</button></th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="details-row" id="jeongbaeMu-details" style="display: none;">
+                <td colspan="5">
+                    <div class="details-content">
+                        <div class="summary-container"></div>
+                        <div class="details-container"></div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th><span>역배 표본</span> <button class="detail-button" onclick="toggleDetails('yeokbae')">상세</button></th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="details-row" id="yeokbae-details" style="display: none;">
+                <td colspan="5">
+                    <div class="details-content">
+                        <div class="summary-container"></div>
+                        <div class="details-container"></div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th><span>역배+무 표본</span> <button class="detail-button" onclick="toggleDetails('yeokbaeMu')">상세</button></th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="details-row" id="yeokbaeMu-details" style="display: none;">
+                <td colspan="5">
+                    <div class="details-content">
+                        <div class="summary-container"></div>
+                        <div class="details-container"></div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th><span>해당리그 정배+무 표본</span> <button class="detail-button" onclick="toggleDetails('selectedLeagueJeongbaeMu')">상세</button></th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="details-row" id="selectedLeagueJeongbaeMu-details" style="display: none;">
+                <td colspan="5">
+                    <div class="details-content">
+                        <div class="summary-container"></div>
+                        <div class="details-container"></div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th><span>해당리그 역배+무 표본</span> <button class="detail-button" onclick="toggleDetails('selectedLeagueYeokbaeMu')">상세</button></th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="details-row" id="selectedLeagueYeokbaeMu-details" style="display: none;">
+                <td colspan="5">
+                    <div class="details-content">
+                        <div class="summary-container"></div>
+                        <div class="details-container"></div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th><span>승(무)패 일치 표본</span> <button class="detail-button" onclick="toggleDetails('allMatchSample')">상세</button></th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="details-row" id="allMatchSample-details" style="display: none;">
+                <td colspan="5">
+                    <div class="details-content">
+                        <div class="summary-container"></div>
+                        <div class="details-container"></div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th><span>당리그 승무패 일치 표본</span> <button class="detail-button" onclick="toggleDetails('currentLeagueMatchSample')">상세</button></th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="details-row" id="currentLeagueMatchSample-details" style="display: none;">
+                <td colspan="5">
+                    <div class="details-content">
+                        <div class="summary-container"></div>
+                        <div class="details-container"></div>
+                    </div>
+                </td>
+            </tr>
         </table>
+
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="search.js"></script>
