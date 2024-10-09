@@ -1,2 +1,2 @@
 # boksil
-boksil analizer
+boksil analyzer
