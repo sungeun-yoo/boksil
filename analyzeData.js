@@ -367,9 +367,12 @@ function showDetails(type, forceUpdate = false) {
         let detailsHtml = '<h4>상세 매치 정보</h4>';
         detailsHtml += '<table class="match-details">';
         detailsHtml += `<tr><th>리그</th><th>날짜</th><th>홈팀</th><th>어웨이팀</th><th>FTHG</th><th>FTAG</th><th>${oddsPrefix}H</th><th>${oddsPrefix}D</th><th>${oddsPrefix}A</th><th>결과</th><th>케이스</th></tr>`;
-
+    
         details.details.forEach(detail => {
             const isJeongbae = detail[`${oddsPrefix}H`] < detail[`${oddsPrefix}A`];
+            const homeOddsStyle = isJeongbae ? 'font-weight: bold;' : '';
+            const awayOddsStyle = !isJeongbae ? 'font-weight: bold;' : '';
+            
             detailsHtml += `<tr>
                 <td>${detail.League}</td>
                 <td>${decodeExcelDate(detail.Date)}</td>
@@ -377,9 +380,9 @@ function showDetails(type, forceUpdate = false) {
                 <td>${detail.AwayTeam}</td>
                 <td>${detail.FTHG}</td>
                 <td>${detail.FTAG}</td>
-                <td>${detail[`${oddsPrefix}H`].toFixed(2)}</td>
+                <td style="${homeOddsStyle}">${detail[`${oddsPrefix}H`].toFixed(2)}</td>
                 <td>${detail[`${oddsPrefix}D`].toFixed(2)}</td>
-                <td>${detail[`${oddsPrefix}A`].toFixed(2)}</td>
+                <td style="${awayOddsStyle}">${detail[`${oddsPrefix}A`].toFixed(2)}</td>
                 <td>${detail.Result}</td>
                 <td>${isJeongbae ? '정배' : '역배'}</td>
             </tr>`;
@@ -393,7 +396,6 @@ function showDetails(type, forceUpdate = false) {
 }
 
 function toggleDetails(type) {
-    //closeAllDetails()
     showDetails(type);
 }
 

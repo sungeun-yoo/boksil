@@ -159,12 +159,6 @@
             font-weight: bold;
         }
         
-        /* 새로운 열에 대한 기본 스타일 */
-        .results-table td:nth-child(6),
-        .results-table td:nth-child(7) {
-            font-weight: bold;
-        }
-        
         /* 높은 값에 대한 색상 스타일 */
         .results-table td.higher-value {
             color: white;
@@ -200,6 +194,9 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+        }
+        .match-details td[style*="font-weight: bold"] {
+            color: #0000FF; /* 파란색으로 변경, 원하는 색상으로 조정 가능 */
         }
         
         .league-summary th,
@@ -278,10 +275,7 @@
     background-color: #f2f2f2;
     font-weight: bold;
 }
-.league-summary td:nth-child(6),
-.league-summary td:nth-child(7) {
-    font-weight: bold;
-}
+
 
 /* 높은 값에 대한 색상 스타일 */
 .league-summary td.higher-value {
