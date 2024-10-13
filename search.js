@@ -323,10 +323,26 @@ document.addEventListener('DOMContentLoaded', function() {
         marginSettings.style.display = marginSettings.style.display === 'none' ? 'block' : 'none';
         console.log('Updated margins:', detailedMargins);          
     });
+    // 배당 유형 선택 라디오 버튼에 이벤트 리스너 추가
+    const oddsTypeRadios = document.querySelectorAll('input[name="oddsType"]');
+    oddsTypeRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            closeAllDetails();
+            processData();
+        });
+    });
 });
+
+function closeAllDetails() {
+    const detailsRows = document.querySelectorAll('.details-row');
+    detailsRows.forEach(row => {
+        row.style.display = 'none';
+    });
+}
 
 function processData() {
     console.log('processData function called');
+    closeAllDetails(); // 상세 창 닫기
     analyzeData();
 }
 

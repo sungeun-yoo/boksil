@@ -10,7 +10,7 @@
 <body>
     <div class="background-image"></div>
     <div class="content">
-        <h1>복실이 분석기 v.1.1.1</h1>
+        <h1>복실이 분석기 v.1.1.2</h1>
         
         <!-- 파일 선택 화면 -->
         <div id="fileSelectionScreen">
@@ -32,7 +32,14 @@
                     <!-- Checkboxes will be dynamically inserted here -->
                 </div>
             </div>
-            
+            <div id="oddsSelection">
+                <label>
+                    <input type="radio" name="oddsType" value="avg" checked> 평균 배당(Avg)
+                </label>
+                <label>
+                    <input type="radio" name="oddsType" value="b365"> Bet365 배당
+                </label>
+            </div>
             <!-- 검색 폼 -->
             <form id="searchForm">
                 <table>

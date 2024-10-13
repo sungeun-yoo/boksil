@@ -49,6 +49,7 @@ function getInputValues() {
         win: parseFloat(document.querySelector('input[name="win"]').value),
         draw: parseFloat(document.querySelector('input[name="draw"]').value),
         lose: parseFloat(document.querySelector('input[name="lose"]').value),
+        oddsType: document.querySelector('input[name="oddsType"]:checked').value
     };
 }
 
@@ -73,7 +74,7 @@ function getDetailedMargins() {
 }
 
 function analyzeMatches(inputValues, analysisType, selectedLeagueOnly = false, detailedMargin) {
-    const { win, draw, lose } = inputValues;
+    const { win, draw, lose, oddsType } = inputValues;
     const results = { "핸승": 0, "핸무": 0, "무": 0, "역": 0 };
     const details = [];
 
@@ -81,7 +82,6 @@ function analyzeMatches(inputValues, analysisType, selectedLeagueOnly = false, d
     if (selectedLeagueOnly && currentLeague) {
         leaguesToProcess = [currentLeague];
     } else if (analysisType === 'currentLeagueMatch') {
-        // 현재 리그가 선택되지 않았다면 분석하지 않음
         return { results, details };
     } else {
         leaguesToProcess = selectedLeagues;
@@ -114,7 +114,7 @@ function analyzeMatches(inputValues, analysisType, selectedLeagueOnly = false, d
 
 
 function getColumnIndices(headerRow) {
-    const columns = ['Date', 'HomeTeam', 'AwayTeam', 'AvgH', 'AvgD', 'AvgA', 'FTHG', 'FTAG'];
+    const columns = ['Date', 'HomeTeam', 'AwayTeam', 'AvgH', 'AvgD', 'AvgA', 'B365H', 'B365D', 'B365A', 'FTHG', 'FTAG'];
     return columns.reduce((acc, col) => {
         acc[col] = headerRow.indexOf(col);
         return acc;
@@ -122,6 +122,7 @@ function getColumnIndices(headerRow) {
 }
 
 function extractMatchData(row, columnIndices) {
+    const oddsType = document.querySelector('input[name="oddsType"]:checked').value;
     return {
         Date: row[columnIndices.Date],
         HomeTeam: row[columnIndices.HomeTeam],
@@ -129,41 +130,48 @@ function extractMatchData(row, columnIndices) {
         AvgH: parseFloat(row[columnIndices.AvgH]),
         AvgD: parseFloat(row[columnIndices.AvgD]),
         AvgA: parseFloat(row[columnIndices.AvgA]),
+        B365H: parseFloat(row[columnIndices.B365H]),
+        B365D: parseFloat(row[columnIndices.B365D]),
+        B365A: parseFloat(row[columnIndices.B365A]),
         FTHG: parseInt(row[columnIndices.FTHG]),
-        FTAG: parseInt(row[columnIndices.FTAG])
+        FTAG: parseInt(row[columnIndices.FTAG]),
+        OddsH: oddsType === 'avg' ? parseFloat(row[columnIndices.AvgH]) : parseFloat(row[columnIndices.B365H]),
+        OddsD: oddsType === 'avg' ? parseFloat(row[columnIndices.AvgD]) : parseFloat(row[columnIndices.B365D]),
+        OddsA: oddsType === 'avg' ? parseFloat(row[columnIndices.AvgA]) : parseFloat(row[columnIndices.B365A])
     };
 }
 
 function isMatchEligible(matchData, win, draw, lose, detailedMargin, analysisType) {
-    const { AvgH, AvgD, AvgA } = matchData;
+    const { OddsH, OddsD, OddsA } = matchData;
     const jeongbae = Math.min(win, lose);
     const yeokbae = Math.max(win, lose);
 
     switch (analysisType) {
         case 'jeongbae':
-            return Math.abs(AvgH - jeongbae) <= detailedMargin.jeongbae || Math.abs(AvgA - jeongbae) <= detailedMargin.jeongbae;
+            return Math.abs(OddsH - jeongbae) <= detailedMargin.jeongbae || Math.abs(OddsA - jeongbae) <= detailedMargin.jeongbae;
         case 'jeongbaeMu':
-            return (Math.abs(AvgH - jeongbae) <= detailedMargin.jeongbae || Math.abs(AvgA - jeongbae) <= detailedMargin.jeongbae) && Math.abs(AvgD - draw) <= detailedMargin.mu;
+            return (Math.abs(OddsH - jeongbae) <= detailedMargin.jeongbae || Math.abs(OddsA - jeongbae) <= detailedMargin.jeongbae) && Math.abs(OddsD - draw) <= detailedMargin.mu;
         case 'yeokbae':
-            return Math.abs(AvgH - yeokbae) <= detailedMargin.yeokbae || Math.abs(AvgA - yeokbae) <= detailedMargin.yeokbae;
+            return Math.abs(OddsH - yeokbae) <= detailedMargin.yeokbae || Math.abs(OddsA - yeokbae) <= detailedMargin.yeokbae;
         case 'yeokbaeMu':
-            return (Math.abs(AvgH - yeokbae) <= detailedMargin.yeokbae || Math.abs(AvgA - yeokbae) <= detailedMargin.yeokbae) && Math.abs(AvgD - draw) <= detailedMargin.mu;
+            return (Math.abs(OddsH - yeokbae) <= detailedMargin.yeokbae || Math.abs(OddsA - yeokbae) <= detailedMargin.yeokbae) && Math.abs(OddsD - draw) <= detailedMargin.mu;
         case 'allMatch':
         case 'currentLeagueMatch':
-            return (Math.abs(AvgH - jeongbae) <= detailedMargin.jeongbae && Math.abs(AvgD - draw) <= detailedMargin.mu && Math.abs(AvgA - yeokbae) <= detailedMargin.yeokbae) ||
-                   (Math.abs(AvgH - yeokbae) <= detailedMargin.yeokbae && Math.abs(AvgD - draw) <= detailedMargin.mu && Math.abs(AvgA - jeongbae) <= detailedMargin.jeongbae);
+            return (Math.abs(OddsH - jeongbae) <= detailedMargin.jeongbae && Math.abs(OddsD - draw) <= detailedMargin.mu && Math.abs(OddsA - yeokbae) <= detailedMargin.yeokbae) ||
+                   (Math.abs(OddsH - yeokbae) <= detailedMargin.yeokbae && Math.abs(OddsD - draw) <= detailedMargin.mu && Math.abs(OddsA - jeongbae) <= detailedMargin.jeongbae);
         default:
             return false;
     }
 }
+
 function calculateResult(matchData, analysisType) {
-    const { AvgH, AvgA, FTHG, FTAG } = matchData;
+    const { OddsH, OddsA, FTHG, FTAG } = matchData;
     let mainScore, subScore;
 
-    if ((analysisType.startsWith('jeongbae') && AvgH < AvgA) || 
-        (analysisType.startsWith('yeokbae') && AvgH < AvgA) ||
-        (analysisType === 'allMatch' && AvgH < AvgA) ||
-        (analysisType === 'currentLeagueMatch' && AvgH < AvgA)) {
+    if ((analysisType.startsWith('jeongbae') && OddsH < OddsA) || 
+        (analysisType.startsWith('yeokbae') && OddsH < OddsA) ||
+        (analysisType === 'allMatch' && OddsH < OddsA) ||
+        (analysisType === 'currentLeagueMatch' && OddsH < OddsA)) {
         mainScore = FTHG;
         subScore = FTAG;
     } else {
@@ -178,6 +186,7 @@ function calculateResult(matchData, analysisType) {
     if (mainScore === subScore) return "무";
     return "역";
 }
+
 
 function updateResultsTable(rowName, analysisResult) {
     console.log(`Updating results table for ${rowName}`, analysisResult);
@@ -222,6 +231,14 @@ function decodeExcelDate(excelDate) {
     return date.toISOString().split('T')[0];
 }
 
+// 모든 상세 창을 닫는 함수 (search.js에 있는 것과 동일)
+function closeAllDetails() {
+    const detailsRows = document.querySelectorAll('.details-row');
+    detailsRows.forEach(row => {
+        row.style.display = 'none';
+    });
+}
+
 function showDetails(type) {
     const detailsRow = document.getElementById(`${type}-details`);
     const detailsContent = detailsRow.querySelector('.details-content');
@@ -229,6 +246,7 @@ function showDetails(type) {
     const detailsContainer = detailsContent.querySelector('.details-container');
 
     if (detailsRow.style.display === 'none') {
+        closeAllDetails();
         detailsRow.style.display = 'table-row';
         const details = analysisDetails[type];
         
@@ -251,6 +269,9 @@ function showDetails(type) {
             default: title = '상세 결과';
         }
 
+        const oddsType = document.querySelector('input[name="oddsType"]:checked').value;
+        const oddsPrefix = oddsType === 'avg' ? 'Avg' : 'B365';
+        
         // 리그별 요약 데이터 생성
         const leagueSummary = {};
         details.details.forEach(detail => {
@@ -261,7 +282,7 @@ function showDetails(type) {
                 };
             }
             const league = leagueSummary[detail.League];
-            const isJeongbae = detail.AvgH < detail.AvgA;
+            const isJeongbae = detail[`${oddsPrefix}H`] < detail[`${oddsPrefix}A`];
             const category = isJeongbae ? league.jeongbae : league.yeokbae;
             
             category[detail.Result]++;
@@ -276,8 +297,8 @@ function showDetails(type) {
             Object.entries(data).forEach(([league, counts]) => {
                 const jeongbae = counts['핸승'] + counts['핸무'];
                 const plhan = counts['무'] + counts['역'];
-                const jeongbaeClass = jeongbae > plhan ? 'higher-value blue' : '';
-                const plhanClass = plhan > jeongbae ? 'higher-value red' : '';
+                const jeongbaeClass = jeongbae > plhan ? 'blue-color' : '';
+                const plhanClass = plhan > jeongbae ? 'red-color' : '';
                 html += `<tr>
                     <td>${league}</td>
                     <td>${counts['핸승']}</td>
@@ -292,9 +313,11 @@ function showDetails(type) {
             html += '</table>';
             return html;
         }
-
-        // 두 개의 테이블 생성
-        let summaryHtml = `<h4>${title} - 리그별 요약</h4>`;
+        
+        const oddsTypeText = oddsType === 'avg' ? '평균 배당' : 'Bet365 배당';
+            
+        // 상세 결과 제목에 배당 유형 추가
+        let summaryHtml = `<h4>${title} - 리그별 요약 (${oddsTypeText})</h4>`;
         summaryHtml += createTable(Object.fromEntries(Object.entries(leagueSummary).map(([k, v]) => [k, v.jeongbae])), '정배 케이스');
         summaryHtml += createTable(Object.fromEntries(Object.entries(leagueSummary).map(([k, v]) => [k, v.yeokbae])), '역배 케이스');
         
@@ -303,10 +326,10 @@ function showDetails(type) {
         // 상세 매치 정보 테이블 생성
         let detailsHtml = '<h4>상세 매치 정보</h4>';
         detailsHtml += '<table class="match-details">';
-        detailsHtml += '<tr><th>리그</th><th>날짜</th><th>홈팀</th><th>어웨이팀</th><th>FTHG</th><th>FTAG</th><th>AvgH</th><th>AvgD</th><th>AvgA</th><th>결과</th><th>케이스</th></tr>';
+        detailsHtml += `<tr><th>리그</th><th>날짜</th><th>홈팀</th><th>어웨이팀</th><th>FTHG</th><th>FTAG</th><th>${oddsPrefix}H</th><th>${oddsPrefix}D</th><th>${oddsPrefix}A</th><th>결과</th><th>케이스</th></tr>`;
 
         details.details.forEach(detail => {
-            const isJeongbae = detail.AvgH < detail.AvgA;
+            const isJeongbae = detail[`${oddsPrefix}H`] < detail[`${oddsPrefix}A`];
             detailsHtml += `<tr>
                 <td>${detail.League}</td>
                 <td>${decodeExcelDate(detail.Date)}</td>
@@ -314,9 +337,9 @@ function showDetails(type) {
                 <td>${detail.AwayTeam}</td>
                 <td>${detail.FTHG}</td>
                 <td>${detail.FTAG}</td>
-                <td>${detail.AvgH.toFixed(2)}</td>
-                <td>${detail.AvgD.toFixed(2)}</td>
-                <td>${detail.AvgA.toFixed(2)}</td>
+                <td>${detail[`${oddsPrefix}H`].toFixed(2)}</td>
+                <td>${detail[`${oddsPrefix}D`].toFixed(2)}</td>
+                <td>${detail[`${oddsPrefix}A`].toFixed(2)}</td>
                 <td>${detail.Result}</td>
                 <td>${isJeongbae ? '정배' : '역배'}</td>
             </tr>`;
