@@ -4,6 +4,19 @@ let selectedLeagues = [];
 let currentLeague = '';
 
 document.addEventListener('DOMContentLoaded', function() {
+    const boksilOpacitySlider = document.getElementById('boksilOpacity');
+    const backgroundImage = document.querySelector('.background-image');
+
+    // 초기 투명도 설정
+    backgroundImage.style.opacity = boksilOpacitySlider.value / 100;
+
+    // 슬라이더 값 변경 시 투명도 업데이트
+    boksilOpacitySlider.addEventListener('input', function() {
+        backgroundImage.style.opacity = this.value / 100;
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('searchForm').addEventListener('submit', function(e) {
         e.preventDefault();
         processData();

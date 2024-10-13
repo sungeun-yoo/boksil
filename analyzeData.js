@@ -50,19 +50,19 @@ function getInputValues() {
 function getDetailedMargins() {
     return {
         jeongbae: {
-            win: parseFloat(document.getElementById('jeongbaeWinMargin').value) || 0,
-            draw: parseFloat(document.getElementById('jeongbaeDrawMargin').value) || 0,
-            lose: parseFloat(document.getElementById('jeongbaeLoseMargin').value) || 0
+            jeongbae: parseFloat(document.getElementById('jeongbaeMargin').value) || 0.2,
+            mu: parseFloat(document.getElementById('jeongbaeMuMargin').value) || 0.2,
+            yeokbae: parseFloat(document.getElementById('jeongbaeYeokbaeMargin').value) || 0.2
         },
         yeokbae: {
-            win: parseFloat(document.getElementById('yeokbaeWinMargin').value) || 0,
-            draw: parseFloat(document.getElementById('yeokbaeDrawMargin').value) || 0,
-            lose: parseFloat(document.getElementById('yeokbaeLoseMargin').value) || 0
+            yeokbae: parseFloat(document.getElementById('yeokbaeMargin').value) || 0.2,
+            mu: parseFloat(document.getElementById('yeokbaeMuMargin').value) || 0.2,
+            jeongbae: parseFloat(document.getElementById('yeokbaeJeongbaeMargin').value) || 0.2
         },
         match: {
-            win: parseFloat(document.getElementById('matchWinMargin').value) || 0,
-            draw: parseFloat(document.getElementById('matchDrawMargin').value) || 0,
-            lose: parseFloat(document.getElementById('matchLoseMargin').value) || 0
+            jeongbae: parseFloat(document.getElementById('matchJeongbaeMargin').value) || 0.2,
+            mu: parseFloat(document.getElementById('matchMuMargin').value) || 0.2,
+            yeokbae: parseFloat(document.getElementById('matchYeokbaeMargin').value) || 0.2
         }
     };
 }
@@ -134,22 +134,21 @@ function isMatchEligible(matchData, win, draw, lose, detailedMargin, analysisTyp
 
     switch (analysisType) {
         case 'jeongbae':
-            return Math.abs(AvgH - jeongbae) <= detailedMargin.win || Math.abs(AvgA - jeongbae) <= detailedMargin.lose;
+            return Math.abs(AvgH - jeongbae) <= detailedMargin.jeongbae || Math.abs(AvgA - jeongbae) <= detailedMargin.jeongbae;
         case 'jeongbaeMu':
-            return (Math.abs(AvgH - jeongbae) <= detailedMargin.win || Math.abs(AvgA - jeongbae) <= detailedMargin.lose) && Math.abs(AvgD - draw) <= detailedMargin.draw;
+            return (Math.abs(AvgH - jeongbae) <= detailedMargin.jeongbae || Math.abs(AvgA - jeongbae) <= detailedMargin.jeongbae) && Math.abs(AvgD - draw) <= detailedMargin.mu;
         case 'yeokbae':
-            return Math.abs(AvgH - yeokbae) <= detailedMargin.win || Math.abs(AvgA - yeokbae) <= detailedMargin.lose;
+            return Math.abs(AvgH - yeokbae) <= detailedMargin.yeokbae || Math.abs(AvgA - yeokbae) <= detailedMargin.yeokbae;
         case 'yeokbaeMu':
-            return (Math.abs(AvgH - yeokbae) <= detailedMargin.win || Math.abs(AvgA - yeokbae) <= detailedMargin.lose) && Math.abs(AvgD - draw) <= detailedMargin.draw;
+            return (Math.abs(AvgH - yeokbae) <= detailedMargin.yeokbae || Math.abs(AvgA - yeokbae) <= detailedMargin.yeokbae) && Math.abs(AvgD - draw) <= detailedMargin.mu;
         case 'allMatch':
         case 'currentLeagueMatch':
-            return (Math.abs(AvgH - win) <= detailedMargin.win && Math.abs(AvgD - draw) <= detailedMargin.draw && Math.abs(AvgA - lose) <= detailedMargin.lose) ||
-                   (Math.abs(AvgH - lose) <= detailedMargin.lose && Math.abs(AvgD - draw) <= detailedMargin.draw && Math.abs(AvgA - win) <= detailedMargin.win);
+            return (Math.abs(AvgH - jeongbae) <= detailedMargin.jeongbae && Math.abs(AvgD - draw) <= detailedMargin.mu && Math.abs(AvgA - yeokbae) <= detailedMargin.yeokbae) ||
+                   (Math.abs(AvgH - yeokbae) <= detailedMargin.yeokbae && Math.abs(AvgD - draw) <= detailedMargin.mu && Math.abs(AvgA - jeongbae) <= detailedMargin.jeongbae);
         default:
             return false;
     }
 }
-
 function calculateResult(matchData, analysisType) {
     const { AvgH, AvgA, FTHG, FTAG } = matchData;
     let mainScore, subScore;

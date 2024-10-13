@@ -320,13 +320,92 @@
     margin-bottom: 20px;
 }
 
-#marginSettings input[type="number"] {
-    width: 80px;
-    padding: 5px;
-    margin-right: 10px;
-}
+
 
 #marginSettings button {
     display: block;
     margin-top: 20px;
+}
+.boksil-presence {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.boksil-presence label {
+    margin-right: 10px;
+}
+
+#boksilOpacity {
+    width: 200px;
+}
+
+#marginSettings {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 5px;
+    max-width: 400px; /* 전체 너비 제한 */
+}
+
+#marginSettings h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 16px;
+}
+
+#marginSettings h4 {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    color: #444;
+    font-size: 14px;
+}
+
+.margin-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2px;
+}
+
+.margin-labels span {
+    flex: 1;
+    text-align: center;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.margin-inputs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+#marginSettings input[type="number"] {
+    width: calc(33.33% - 3px);
+    padding: 3px;
+    margin-right: 3px;
+    box-sizing: border-box;
+    font-size: 12px;
+}
+
+#marginSettings input[type="number"]:last-child {
+    margin-right: 0;
+}
+
+#marginSettings button {
+    display: block;
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    width: 100%; /* 버튼 너비를 100%로 설정 */
+}
+
+#marginSettings button:hover {
+    background-color: #45a049;
 }
