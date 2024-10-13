@@ -147,16 +147,39 @@
             background-color: #e0e0e0;
         }
 
-        /* 결과 테이블 내의 th 스타일 조정 */
+        .results-table th,
+        .results-table td {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        
         .results-table th {
-            align-items: center;
-            justify-content: space-between;
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        /* 새로운 열에 대한 기본 스타일 */
+        .results-table td:nth-child(6),
+        .results-table td:nth-child(7) {
+            font-weight: bold;
+        }
+        
+        /* 높은 값에 대한 색상 스타일 */
+        .results-table td.higher-value {
+            color: white;
+        }
+        
+        .blue-color {
+            background-color: #4a86e8;
+            color: white;
+        }
+        
+        .red-color {
+            background-color: #e06666;
+            color: white;
         }
 
-        /* 결과 테이블 내의 th 텍스트 스타일 */
-        .results-table th span {
-            flex-grow: 1;
-        }
         .details-content {
             max-height: 500px;
             overflow-y: auto;
@@ -173,8 +196,7 @@
             overflow-x: auto;
         }
         
-        .league-summary,
-        .match-details {
+        .league-summary, .match-details {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
@@ -207,7 +229,11 @@
         .match-details tr:hover {
             background-color: #f5f5f5;
         }
-        
+        .league-summary h5 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
         .details-content h4 {
             margin-top: 20px;
             margin-bottom: 10px;
@@ -237,15 +263,11 @@
 
 .league-summary,
 .match-details {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
+    font-size: 0.9em;
 }
 
-.league-summary th,
-.league-summary td,
-.match-details th,
-.match-details td {
+.league-summary th, .league-summary td,
+.match-details th, .match-details td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: center;
@@ -255,12 +277,24 @@
 .match-details th {
     background-color: #f2f2f2;
     font-weight: bold;
-    position: sticky;
-    top: 0;
-    z-index: 10;
+}
+.league-summary td:nth-child(6),
+.league-summary td:nth-child(7) {
+    font-weight: bold;
 }
 
-/* 기존 스타일 유지 */
+/* 높은 값에 대한 색상 스타일 */
+.league-summary td.higher-value {
+    color: white;
+}
+
+.league-summary td.higher-value.blue {
+    background-color: #4a86e8; /* 파란색 */
+}
+
+.league-summary td.higher-value.red {
+    background-color: #e06666; /* 빨간색 */
+}
 
 #searchForm table {
     width: 100%;
@@ -408,4 +442,33 @@
 
 #marginSettings button:hover {
     background-color: #45a049;
+}
+
+#dateRangeFilter {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#dateSlider {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#dateDisplay {
+    text-align: center;
+    font-weight: bold;
+}
+#yearlyDateRangeFilter {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#yearlyDateSlider {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#yearlyDateDisplay {
+    text-align: center;
+    font-weight: bold;
 }

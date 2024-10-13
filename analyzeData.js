@@ -10,8 +10,12 @@ let analysisDetails = {
 };
 
 function analyzeData() {
+    console.log('analyzeData function called');
     const inputValues = getInputValues();
     const detailedMargins = getDetailedMargins();
+
+    console.log('Input values:', inputValues);
+    console.log('Detailed margins:', detailedMargins);
 
     analysisDetails.jeongbae = analyzeMatches(inputValues, 'jeongbae', false, detailedMargins.jeongbae);
     analysisDetails.jeongbaeMu = analyzeMatches(inputValues, 'jeongbaeMu', false, detailedMargins.jeongbae);
@@ -37,6 +41,7 @@ function analyzeData() {
         updateResultsTable('해당리그 역배+무 표본', { results: { "핸승": "-", "핸무": "-", "무": "-", "역": "-" } });
         updateResultsTable('당리그 승무패 일치 표본', { results: { "핸승": "-", "핸무": "-", "무": "-", "역": "-" } });
     }
+    console.log('Analysis completed');
 }
 
 function getInputValues() {
@@ -92,8 +97,9 @@ function analyzeMatches(inputValues, analysisType, selectedLeagueOnly = false, d
 
             jsonData.slice(1).forEach(row => {
                 const matchData = extractMatchData(row, columnIndices);
+                const matchDate = new Date((matchData.Date - 25569) * 86400 * 1000);
                 
-                if (isMatchEligible(matchData, win, draw, lose, detailedMargin, analysisType)) {
+                if (isDateInRange(matchDate) && isMatchEligible(matchData, win, draw, lose, detailedMargin, analysisType)) {
                     const result = calculateResult(matchData, analysisType);
                     results[result]++;
                     details.push({ ...matchData, League: sheetName, Result: result });
@@ -104,6 +110,7 @@ function analyzeMatches(inputValues, analysisType, selectedLeagueOnly = false, d
 
     return { results, details };
 }
+
 
 
 function getColumnIndices(headerRow) {
@@ -154,7 +161,7 @@ function calculateResult(matchData, analysisType) {
     let mainScore, subScore;
 
     if ((analysisType.startsWith('jeongbae') && AvgH < AvgA) || 
-        (analysisType.startsWith('yeokbae') && AvgH > AvgA) ||
+        (analysisType.startsWith('yeokbae') && AvgH < AvgA) ||
         (analysisType === 'allMatch' && AvgH < AvgA) ||
         (analysisType === 'currentLeagueMatch' && AvgH < AvgA)) {
         mainScore = FTHG;
@@ -164,6 +171,8 @@ function calculateResult(matchData, analysisType) {
         subScore = FTHG;
     }
 
+    console.log('Match Data:', matchData);
+    console.log('Main Score:', mainScore, 'Sub Score:', subScore);
     if (mainScore > subScore + 1) return "핸승";
     if (mainScore === subScore + 1) return "핸무";
     if (mainScore === subScore) return "무";
@@ -171,6 +180,7 @@ function calculateResult(matchData, analysisType) {
 }
 
 function updateResultsTable(rowName, analysisResult) {
+    console.log(`Updating results table for ${rowName}`, analysisResult);
     const table = document.querySelector('.results-table');
     const row = Array.from(table.querySelectorAll('tr')).find(row => {
         const span = row.querySelector('th span');
@@ -179,10 +189,31 @@ function updateResultsTable(rowName, analysisResult) {
     
     if (row) {
         const cells = row.querySelectorAll('td');
+        const results = analysisResult.results;
         ['핸승', '핸무', '무', '역'].forEach((result, index) => {
-            cells[index].textContent = analysisResult.results[result];
+            cells[index].textContent = results[result];
         });
+        
+        // 새로운 열에 대한 계산 추가
+        const hanSeungHanMu = (parseInt(results['핸승']) || 0) + (parseInt(results['핸무']) || 0);
+        const muYeok = (parseInt(results['무']) || 0) + (parseInt(results['역']) || 0);
+        
+        cells[4].textContent = hanSeungHanMu;
+        cells[5].textContent = muYeok;
+
+        // 색상 적용 로직
+        if (hanSeungHanMu > muYeok) {
+            cells[4].className = 'blue-color';
+            cells[5].className = 'blue-color';
+        } else if (muYeok > hanSeungHanMu) {
+            cells[4].className = 'red-color';
+            cells[5].className = 'red-color';
+        } else {
+            cells[4].className = '';
+            cells[5].className = '';
+        }
     }
+    console.log(`Results table updated for ${rowName}`);
 }
 
 
@@ -190,7 +221,6 @@ function decodeExcelDate(excelDate) {
     const date = new Date((excelDate - 25569) * 86400 * 1000);
     return date.toISOString().split('T')[0];
 }
-
 
 function showDetails(type) {
     const detailsRow = document.getElementById(`${type}-details`);
@@ -202,6 +232,12 @@ function showDetails(type) {
         detailsRow.style.display = 'table-row';
         const details = analysisDetails[type];
         
+        if (!details || !details.details || details.details.length === 0) {
+            summaryContainer.innerHTML = '<p>데이터가 없습니다.</p>';
+            detailsContainer.innerHTML = '';
+            return;
+        }
+
         let title;
         switch(type) {
             case 'jeongbae': title = '정배 표본 상세 결과'; break;
@@ -215,36 +251,62 @@ function showDetails(type) {
             default: title = '상세 결과';
         }
 
-        // 리그별 요약 테이블 생성
+        // 리그별 요약 데이터 생성
         const leagueSummary = {};
         details.details.forEach(detail => {
             if (!leagueSummary[detail.League]) {
-                leagueSummary[detail.League] = { '핸승': 0, '핸무': 0, '무': 0, '역': 0 };
+                leagueSummary[detail.League] = {
+                    jeongbae: { '핸승': 0, '핸무': 0, '무': 0, '역': 0, 'total': 0 },
+                    yeokbae: { '핸승': 0, '핸무': 0, '무': 0, '역': 0, 'total': 0 }
+                };
             }
-            leagueSummary[detail.League][detail.Result]++;
+            const league = leagueSummary[detail.League];
+            const isJeongbae = detail.AvgH < detail.AvgA;
+            const category = isJeongbae ? league.jeongbae : league.yeokbae;
+            
+            category[detail.Result]++;
+            category.total++;
         });
 
+        // 테이블 생성 함수
+        function createTable(data, title) {
+            let html = `<h5>${title}</h5>`;
+            html += '<table class="league-summary">';
+            html += '<tr><th>리그</th><th>핸승</th><th>핸무</th><th>무</th><th>역</th><th>합계</th><th>정배</th><th>플핸</th></tr>';
+            Object.entries(data).forEach(([league, counts]) => {
+                const jeongbae = counts['핸승'] + counts['핸무'];
+                const plhan = counts['무'] + counts['역'];
+                const jeongbaeClass = jeongbae > plhan ? 'higher-value blue' : '';
+                const plhanClass = plhan > jeongbae ? 'higher-value red' : '';
+                html += `<tr>
+                    <td>${league}</td>
+                    <td>${counts['핸승']}</td>
+                    <td>${counts['핸무']}</td>
+                    <td>${counts['무']}</td>
+                    <td>${counts['역']}</td>
+                    <td>${counts.total}</td>
+                    <td class="${jeongbaeClass}">${jeongbae}</td>
+                    <td class="${plhanClass}">${plhan}</td>
+                </tr>`;
+            });
+            html += '</table>';
+            return html;
+        }
+
+        // 두 개의 테이블 생성
         let summaryHtml = `<h4>${title} - 리그별 요약</h4>`;
-        summaryHtml += '<table class="league-summary">';
-        summaryHtml += '<tr><th>리그</th><th>핸승</th><th>핸무</th><th>무</th><th>역</th></tr>';
-        Object.entries(leagueSummary).forEach(([league, counts]) => {
-            summaryHtml += `<tr>
-                <td>${league}</td>
-                <td>${counts['핸승']}</td>
-                <td>${counts['핸무']}</td>
-                <td>${counts['무']}</td>
-                <td>${counts['역']}</td>
-            </tr>`;
-        });
-        summaryHtml += '</table>';
+        summaryHtml += createTable(Object.fromEntries(Object.entries(leagueSummary).map(([k, v]) => [k, v.jeongbae])), '정배 케이스');
+        summaryHtml += createTable(Object.fromEntries(Object.entries(leagueSummary).map(([k, v]) => [k, v.yeokbae])), '역배 케이스');
+        
         summaryContainer.innerHTML = summaryHtml;
 
         // 상세 매치 정보 테이블 생성
         let detailsHtml = '<h4>상세 매치 정보</h4>';
         detailsHtml += '<table class="match-details">';
-        detailsHtml += '<tr><th>리그</th><th>날짜</th><th>홈팀</th><th>어웨이팀</th><th>FTHG</th><th>FTAG</th><th>AvgH</th><th>AvgD</th><th>AvgA</th><th>결과</th></tr>';
+        detailsHtml += '<tr><th>리그</th><th>날짜</th><th>홈팀</th><th>어웨이팀</th><th>FTHG</th><th>FTAG</th><th>AvgH</th><th>AvgD</th><th>AvgA</th><th>결과</th><th>케이스</th></tr>';
 
         details.details.forEach(detail => {
+            const isJeongbae = detail.AvgH < detail.AvgA;
             detailsHtml += `<tr>
                 <td>${detail.League}</td>
                 <td>${decodeExcelDate(detail.Date)}</td>
@@ -252,10 +314,11 @@ function showDetails(type) {
                 <td>${detail.AwayTeam}</td>
                 <td>${detail.FTHG}</td>
                 <td>${detail.FTAG}</td>
-                <td>${detail.AvgH}</td>
-                <td>${detail.AvgD}</td>
-                <td>${detail.AvgA}</td>
+                <td>${detail.AvgH.toFixed(2)}</td>
+                <td>${detail.AvgD.toFixed(2)}</td>
+                <td>${detail.AvgA.toFixed(2)}</td>
                 <td>${detail.Result}</td>
+                <td>${isJeongbae ? '정배' : '역배'}</td>
             </tr>`;
         });
 

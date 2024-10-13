@@ -5,97 +5,118 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>복실이 분석기</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
 <body>
     <div class="background-image"></div>
     <div class="content">
-        
-        <h1>복실이 분석기 v.1.0.0</h1>
+        <h1>복실이 분석기 v.1.1.1</h1>
         
         <!-- 파일 선택 화면 -->
         <div id="fileSelectionScreen">
             <input type="file" id="excelFile" accept=".xlsx, .xls">
             <button onclick="loadExcelFile()">파일 로드</button>
         </div>
+
         <div id="analysisScreen" style="display: none;">
-        <!-- 복실이 존재감 슬라이더 추가 -->
-        <div class="boksil-presence">
-        <label for="boksilOpacity">복실이 존재감:</label>
-        <input type="range" id="boksilOpacity" min="0" max="100" value="30">
-        </div>
-        <form id="searchForm">
-            <table>
-                <tr>
-                  <td>리그</td>
-                  <td>승</td>
-                  <td>무</td>
-                  <td>패</td>
-                </tr>
-                <tr>
-                  <td>
-                    <select id="currentLeague">
-                        <option value="">선택된 리그</option>
-                    </select>
-                  </td>
-                  <td><input type="number" name="win" step="0.01" value="1.55" required></td>
-                  <td><input type="number" name="draw" step="0.01" value="4.58" required></td>
-                  <td><input type="number" name="lose" step="0.01" value="5.55" required></td>
-                </tr>
-              </table>
-            <button type="submit">검색</button>
-            <button type="button" id="marginSettingsButton">검색 마진 설정</button>
-        </form>     
-        <div id="marginSettings" style="display: none;">
-            <h3>검색 마진 상세 설정</h3>
-            <div>
-                <h4>정배 표본 마진</h4>
-                <div class="margin-labels">
-                    <span>정배</span>
-                    <span>무</span>
-                    <span>역배</span>
-                </div>
-                <div class="margin-inputs">
-                    <input type="number" id="jeongbaeMargin" placeholder="정배" step="0.01" value="0.2">
-                    <input type="number" id="jeongbaeMuMargin" placeholder="무" step="0.01" value="0.2">
-                    <input type="number" id="jeongbaeYeokbaeMargin" placeholder="역배" step="0.01" value="0.2">
+            <!-- 복실이 존재감 슬라이더 -->
+            <div class="boksil-presence">
+                <label for="boksilOpacity">복실이 존재감:</label>
+                <input type="range" id="boksilOpacity" min="0" max="100" value="30">
+            </div>
+                        
+            <!-- 리그 선택 -->
+            <div id="leagueSelection">
+                <h3 class="league-toggle" onclick="toggleLeagueCheckboxes()">리그 선택 (열기)</h3>
+                <div class="league-checkboxes">
+                    <!-- Checkboxes will be dynamically inserted here -->
                 </div>
             </div>
-            <div>
-                <h4>역배 표본 마진</h4>
-                <div class="margin-labels">
-                    <span>정배</span>
-                    <span>무</span>
-                    <span>역배</span>
+            
+            <!-- 검색 폼 -->
+            <form id="searchForm">
+                <table>
+                    <tr>
+                        <td>리그</td>
+                        <td>정배</td>
+                        <td>무</td>
+                        <td>역배</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select id="currentLeague">
+                                <option value="">선택된 리그</option>
+                            </select>
+                        </td>
+                        <td><input type="number" name="win" step="0.01" value="1.55" required></td>
+                        <td><input type="number" name="draw" step="0.01" value="4.58" required></td>
+                        <td><input type="number" name="lose" step="0.01" value="5.55" required></td>
+                    </tr>
+                </table>
+                <button type="submit">검색</button>
+                <button type="button" id="marginSettingsButton">검색 마진 설정</button>
+            </form>
+        
+            <!-- 마진 설정 (기존 코드 유지) -->
+            <div id="marginSettings" style="display: none;">
+                <h3>검색 마진 상세 설정</h3>
+                <div>
+                    <h4>정배 표본 마진</h4>
+                    <div class="margin-labels">
+                        <span>정배</span>
+                        <span>무</span>
+                        <span>역배</span>
+                    </div>
+                    <div class="margin-inputs">
+                        <input type="number" id="jeongbaeMargin" placeholder="정배" step="0.01" value="0.04">
+                        <input type="number" id="jeongbaeMuMargin" placeholder="무" step="0.01" value="0.07">
+                        <input type="number" id="jeongbaeYeokbaeMargin" placeholder="역배" step="0.01" value="0.09">
+                    </div>
                 </div>
-                <div class="margin-inputs">
-                    <input type="number" id="yeokbaeJeongbaeMargin" placeholder="정배" step="0.01" value="0.2">
-                    <input type="number" id="yeokbaeMuMargin" placeholder="무" step="0.01" value="0.2">
-                    <input type="number" id="yeokbaeMargin" placeholder="역배" step="0.01" value="0.2">
+                <div>
+                    <h4>역배 표본 마진</h4>
+                    <div class="margin-labels">
+                        <span>정배</span>
+                        <span>무</span>
+                        <span>역배</span>
+                    </div>
+                    <div class="margin-inputs">
+                        <input type="number" id="yeokbaeJeongbaeMargin" placeholder="정배" step="0.01" value="0.04">
+                        <input type="number" id="yeokbaeMuMargin" placeholder="무" step="0.01" value="0.07">
+                        <input type="number" id="yeokbaeMargin" placeholder="역배" step="0.01" value="0.09">
+                    </div>
+                </div>
+                <div>
+                    <h4>승무패 일치 마진</h4>
+                    <div class="margin-labels">
+                        <span>정배</span>
+                        <span>무</span>
+                        <span>역배</span>
+                    </div>
+                    <div class="margin-inputs">
+                        <input type="number" id="matchJeongbaeMargin" placeholder="정배" step="0.01" value="0.04">
+                        <input type="number" id="matchMuMargin" placeholder="무" step="0.01" value="0.07">
+                        <input type="number" id="matchYeokbaeMargin" placeholder="역배" step="0.01" value="0.09">
+                    </div>
+                </div>
+                <button id="applyMarginSettings">적용</button>
+            </div>
+            
+            <!-- 날짜 범위 필터 -->
+            <div id="dateRangeFilter">
+                <h3>날짜 범위 필터</h3>
+                <div id="dateSlider"></div>
+                <div id="dateDisplay">
+                    <span id="startDate"></span> - <span id="endDate"></span>
                 </div>
             </div>
-            <div>
-                <h4>승무패 일치 마진</h4>
-                <div class="margin-labels">
-                    <span>정배</span>
-                    <span>무</span>
-                    <span>역배</span>
-                </div>
-                <div class="margin-inputs">
-                    <input type="number" id="matchJeongbaeMargin" placeholder="정배" step="0.01" value="0.2">
-                    <input type="number" id="matchMuMargin" placeholder="무" step="0.01" value="0.2">
-                    <input type="number" id="matchYeokbaeMargin" placeholder="역배" step="0.01" value="0.2">
+            <div id="yearlyDateRangeFilter">
+                <h3>연중 특정 기간 필터</h3>
+                <div id="yearlyDateSlider"></div>
+                <div id="yearlyDateDisplay">
+                    <span id="yearlyStartDate"></span> - <span id="yearlyEndDate"></span>
                 </div>
             </div>
-            <button id="applyMarginSettings">적용</button>
-        </div>
-
-        <div id="leagueSelection">
-            <h3 class="league-toggle" onclick="toggleLeagueCheckboxes()">리그 선택 ▶</h3>
-            <div class="league-checkboxes">
-                <!-- Checkboxes will be dynamically inserted here -->
-            </div>
-        </div>
-
         <!--<div id="dataOutput"></div> -->
        
         <table class="results-table">
@@ -105,16 +126,20 @@
                 <th>핸무</th>
                 <th>무</th>
                 <th>역</th>
+                <th>정배</th>
+                <th>플핸</th>
             </tr>
             <tr>
-                <th><span>정배 표본</span> <button class="detail-button" onclick="toggleDetails('jeongbae')">상세</button></th>
+                <th><span>정배 표본</span><button class="detail-button" onclick="toggleDetails('jeongbae')">상세</button></th>
+                <td></td>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
             </tr>
             <tr class="details-row" id="jeongbae-details" style="display: none;">
-                <td colspan="5">
+                <td colspan="7">
                     <div class="details-content">
                         <div class="summary-container"></div>
                         <div class="details-container"></div>
@@ -127,9 +152,11 @@
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
+                <td></td>
             </tr>
             <tr class="details-row" id="jeongbaeMu-details" style="display: none;">
-                <td colspan="5">
+                <td colspan="7">
                     <div class="details-content">
                         <div class="summary-container"></div>
                         <div class="details-container"></div>
@@ -142,9 +169,11 @@
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
+                <td></td>
             </tr>
             <tr class="details-row" id="yeokbae-details" style="display: none;">
-                <td colspan="5">
+                <td colspan="7">
                     <div class="details-content">
                         <div class="summary-container"></div>
                         <div class="details-container"></div>
@@ -157,9 +186,11 @@
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
+                <td></td>
             </tr>
             <tr class="details-row" id="yeokbaeMu-details" style="display: none;">
-                <td colspan="5">
+                <td colspan="7">
                     <div class="details-content">
                         <div class="summary-container"></div>
                         <div class="details-container"></div>
@@ -172,9 +203,11 @@
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
+                <td></td>
             </tr>
             <tr class="details-row" id="selectedLeagueJeongbaeMu-details" style="display: none;">
-                <td colspan="5">
+                <td colspan="7">
                     <div class="details-content">
                         <div class="summary-container"></div>
                         <div class="details-container"></div>
@@ -187,9 +220,11 @@
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
+                <td></td>
             </tr>
             <tr class="details-row" id="selectedLeagueYeokbaeMu-details" style="display: none;">
-                <td colspan="5">
+                <td colspan="7">
                     <div class="details-content">
                         <div class="summary-container"></div>
                         <div class="details-container"></div>
@@ -202,9 +237,11 @@
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
+                <td></td>
             </tr>
             <tr class="details-row" id="allMatchSample-details" style="display: none;">
-                <td colspan="5">
+                <td colspan="7">
                     <div class="details-content">
                         <div class="summary-container"></div>
                         <div class="details-container"></div>
@@ -217,9 +254,11 @@
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
+                <td></td>
             </tr>
             <tr class="details-row" id="currentLeagueMatchSample-details" style="display: none;">
-                <td colspan="5">
+                <td colspan="7">
                     <div class="details-content">
                         <div class="summary-container"></div>
                         <div class="details-container"></div>
@@ -229,7 +268,10 @@
         </table>
 
     </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script src="search.js"></script>
     <script src="analyzeData.js"></script>
 </body>
