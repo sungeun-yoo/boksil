@@ -9,7 +9,7 @@ let analysisDetails = {
     currentLeagueMatchSample: []
 };
 
-function analyzeData() {
+function analyzeData(keepDetailsOpen = false) {
     console.log('analyzeData function called');
     const inputValues = getInputValues();
     const detailedMargins = getDetailedMargins();
@@ -41,7 +41,22 @@ function analyzeData() {
         updateResultsTable('해당리그 역배+무 표본', { results: { "핸승": "-", "핸무": "-", "무": "-", "역": "-" } });
         updateResultsTable('당리그 승무패 일치 표본', { results: { "핸승": "-", "핸무": "-", "무": "-", "역": "-" } });
     }
+
+    if (keepDetailsOpen) {
+        updateOpenDetails();
+    }
+
     console.log('Analysis completed');
+}
+
+function updateOpenDetails() {
+    const detailsRows = document.querySelectorAll('.details-row');
+    detailsRows.forEach(row => {
+        if (row.style.display === 'table-row') {
+            const type = row.id.replace('-details', '');
+            showDetails(type, true);  // true 파라미터는 강제 업데이트를 의미
+        }
+    });
 }
 
 function getInputValues() {
@@ -239,14 +254,13 @@ function closeAllDetails() {
     });
 }
 
-function showDetails(type) {
+function showDetails(type, forceUpdate = false) {
     const detailsRow = document.getElementById(`${type}-details`);
     const detailsContent = detailsRow.querySelector('.details-content');
     const summaryContainer = detailsContent.querySelector('.summary-container');
     const detailsContainer = detailsContent.querySelector('.details-container');
 
-    if (detailsRow.style.display === 'none') {
-        closeAllDetails();
+    if (detailsRow.style.display === 'none' || forceUpdate) {
         detailsRow.style.display = 'table-row';
         const details = analysisDetails[type];
         
@@ -294,6 +308,9 @@ function showDetails(type) {
             let html = `<h5>${title}</h5>`;
             html += '<table class="league-summary">';
             html += '<tr><th>리그</th><th>핸승</th><th>핸무</th><th>무</th><th>역</th><th>합계</th><th>정배</th><th>플핸</th></tr>';
+            
+            let totalHandSeung = 0, totalHandMu = 0, totalMu = 0, totalYeok = 0, totalSum = 0, totalJeongbae = 0, totalPlhan = 0;
+            
             Object.entries(data).forEach(([league, counts]) => {
                 const jeongbae = counts['핸승'] + counts['핸무'];
                 const plhan = counts['무'] + counts['역'];
@@ -309,7 +326,30 @@ function showDetails(type) {
                     <td class="${jeongbaeClass}">${jeongbae}</td>
                     <td class="${plhanClass}">${plhan}</td>
                 </tr>`;
+                
+                totalHandSeung += counts['핸승'];
+                totalHandMu += counts['핸무'];
+                totalMu += counts['무'];
+                totalYeok += counts['역'];
+                totalSum += counts.total;
+                totalJeongbae += jeongbae;
+                totalPlhan += plhan;
             });
+            
+            // 합계 행 추가
+            const totalJeongbaeClass = totalJeongbae > totalPlhan ? 'blue-color' : '';
+            const totalPlhanClass = totalPlhan > totalJeongbae ? 'red-color' : '';
+            html += `<tr class="total-row">
+                <td><strong>합계</strong></td>
+                <td><strong>${totalHandSeung}</strong></td>
+                <td><strong>${totalHandMu}</strong></td>
+                <td><strong>${totalMu}</strong></td>
+                <td><strong>${totalYeok}</strong></td>
+                <td><strong>${totalSum}</strong></td>
+                <td class="${totalJeongbaeClass}"><strong>${totalJeongbae}</strong></td>
+                <td class="${totalPlhanClass}"><strong>${totalPlhan}</strong></td>
+            </tr>`;
+            
             html += '</table>';
             return html;
         }
@@ -347,14 +387,16 @@ function showDetails(type) {
 
         detailsHtml += '</table>';
         detailsContainer.innerHTML = detailsHtml;
-    } else {
+    } else if (!forceUpdate) {
         detailsRow.style.display = 'none';
     }
 }
 
 function toggleDetails(type) {
+    //closeAllDetails()
     showDetails(type);
 }
+
 // HTML에서 호출할 함수들
 function showJeongbaeDetails() { showDetails('jeongbae'); }
 function showJeongbaeMuDetails() { showDetails('jeongbaeMu'); }

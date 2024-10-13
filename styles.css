@@ -482,3 +482,11 @@
 #oddsSelection label {
     margin-right: 20px;
 }
+.league-summary .total-row {
+    border-top: 2px solid #333;
+    background-color: #f0f0f0;
+}
+
+.league-summary .total-row td {
+    font-weight: bold;
+}

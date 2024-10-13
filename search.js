@@ -327,8 +327,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const oddsTypeRadios = document.querySelectorAll('input[name="oddsType"]');
     oddsTypeRadios.forEach(radio => {
         radio.addEventListener('change', function() {
-            closeAllDetails();
-            processData();
+            processData(true);  // true 파라미터는 상세 페이지를 유지하라는 의미
         });
     });
 });
@@ -340,10 +339,9 @@ function closeAllDetails() {
     });
 }
 
-function processData() {
+function processData(keepDetailsOpen = false) {
     console.log('processData function called');
-    closeAllDetails(); // 상세 창 닫기
-    analyzeData();
+    analyzeData(keepDetailsOpen);
 }
 
 function toggleResults() {
