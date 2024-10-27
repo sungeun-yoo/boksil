@@ -286,36 +286,41 @@ function showDetails(type, forceUpdate = false) {
         const oddsType = document.querySelector('input[name="oddsType"]:checked').value;
         const oddsPrefix = oddsType === 'avg' ? 'Avg' : 'B365';
         
-        // 리그별 요약 데이터 생성
-        const leagueSummary = {};
+        // 리그별 요약 데이터 생성 및 정배/역배 분리
+        const leagueSummary = {
+            jeongbae: {},
+            yeokbae: {}
+        };
+        
         details.details.forEach(detail => {
-            if (!leagueSummary[detail.League]) {
-                leagueSummary[detail.League] = {
-                    jeongbae: { '핸승': 0, '핸무': 0, '무': 0, '역': 0, 'total': 0 },
-                    yeokbae: { '핸승': 0, '핸무': 0, '무': 0, '역': 0, 'total': 0 }
+            const isJeongbae = detail[`${oddsPrefix}H`] < detail[`${oddsPrefix}A`];
+            const category = isJeongbae ? 'jeongbae' : 'yeokbae';
+            const league = detail.League;
+
+            if (!leagueSummary[category][league]) {
+                leagueSummary[category][league] = {
+                    '핸승': 0, '핸무': 0, '무': 0, '역': 0, 'total': 0
                 };
             }
-            const league = leagueSummary[detail.League];
-            const isJeongbae = detail[`${oddsPrefix}H`] < detail[`${oddsPrefix}A`];
-            const category = isJeongbae ? league.jeongbae : league.yeokbae;
             
-            category[detail.Result]++;
-            category.total++;
+            leagueSummary[category][league][detail.Result]++;
+            leagueSummary[category][league].total++;
         });
 
         // 테이블 생성 함수
-        function createTable(data, title) {
-            let html = `<h5>${title}</h5>`;
+        function createSummaryTable(data, categoryTitle) {
+            let html = `<h5>${categoryTitle}</h5>`;
             html += '<table class="league-summary">';
             html += '<tr><th>리그</th><th>핸승</th><th>핸무</th><th>무</th><th>역</th><th>합계</th><th>정배</th><th>플핸</th></tr>';
             
-            let totalHandSeung = 0, totalHandMu = 0, totalMu = 0, totalYeok = 0, totalSum = 0, totalJeongbae = 0, totalPlhan = 0;
+            let totalHandSeung = 0, totalHandMu = 0, totalMu = 0, totalYeok = 0, totalSum = 0;
             
             Object.entries(data).forEach(([league, counts]) => {
                 const jeongbae = counts['핸승'] + counts['핸무'];
                 const plhan = counts['무'] + counts['역'];
                 const jeongbaeClass = jeongbae > plhan ? 'blue-color' : '';
                 const plhanClass = plhan > jeongbae ? 'red-color' : '';
+                
                 html += `<tr>
                     <td>${league}</td>
                     <td>${counts['핸승']}</td>
@@ -332,13 +337,13 @@ function showDetails(type, forceUpdate = false) {
                 totalMu += counts['무'];
                 totalYeok += counts['역'];
                 totalSum += counts.total;
-                totalJeongbae += jeongbae;
-                totalPlhan += plhan;
             });
             
-            // 합계 행 추가
+            const totalJeongbae = totalHandSeung + totalHandMu;
+            const totalPlhan = totalMu + totalYeok;
             const totalJeongbaeClass = totalJeongbae > totalPlhan ? 'blue-color' : '';
             const totalPlhanClass = totalPlhan > totalJeongbae ? 'red-color' : '';
+            
             html += `<tr class="total-row">
                 <td><strong>합계</strong></td>
                 <td><strong>${totalHandSeung}</strong></td>
@@ -353,45 +358,82 @@ function showDetails(type, forceUpdate = false) {
             html += '</table>';
             return html;
         }
+
+        function createMatchDetailsTable(matchDetails, categoryTitle, isJeongbae, containerId) {
+            let html = `<div class="match-details-section">
+                <div class="match-details-header">
+                    <h5>상세 매치 정보: ${categoryTitle}</h5>
+                    <button onclick="toggleMatchDetails('${containerId}')" class="toggle-details-btn">닫기</button>
+                </div>
+                <div id="${containerId}" class="match-details-container">
+                    <table class="match-details">
+                        <tr>
+                            <th>리그</th>
+                            <th>날짜</th>
+                            <th>홈팀</th>
+                            <th>어웨이팀</th>
+                            <th>FTHG</th>
+                            <th>FTAG</th>
+                            <th>${oddsPrefix}H</th>
+                            <th>${oddsPrefix}D</th>
+                            <th>${oddsPrefix}A</th>
+                            <th>결과</th>
+                        </tr>`;
+            
+            matchDetails.filter(detail => {
+                const detailIsJeongbae = detail[`${oddsPrefix}H`] < detail[`${oddsPrefix}A`];
+                return detailIsJeongbae === isJeongbae;
+            }).forEach(detail => {
+                const homeOddsStyle = isJeongbae ? 'font-weight: bold;' : '';
+                const awayOddsStyle = !isJeongbae ? 'font-weight: bold;' : '';
+                
+                html += `<tr>
+                    <td>${detail.League}</td>
+                    <td>${decodeExcelDate(detail.Date)}</td>
+                    <td>${detail.HomeTeam}</td>
+                    <td>${detail.AwayTeam}</td>
+                    <td>${detail.FTHG}</td>
+                    <td>${detail.FTAG}</td>
+                    <td style="${homeOddsStyle}">${detail[`${oddsPrefix}H`].toFixed(2)}</td>
+                    <td>${detail[`${oddsPrefix}D`].toFixed(2)}</td>
+                    <td style="${awayOddsStyle}">${detail[`${oddsPrefix}A`].toFixed(2)}</td>
+                    <td>${detail.Result}</td>
+                </tr>`;
+            });
+        
+            html += `</table></div></div>`;
+            return html;
+        }
         
         const oddsTypeText = oddsType === 'avg' ? '평균 배당' : 'Bet365 배당';
-            
-        // 상세 결과 제목에 배당 유형 추가
         let summaryHtml = `<h4>${title} - 리그별 요약 (${oddsTypeText})</h4>`;
-        summaryHtml += createTable(Object.fromEntries(Object.entries(leagueSummary).map(([k, v]) => [k, v.jeongbae])), '정배 케이스');
-        summaryHtml += createTable(Object.fromEntries(Object.entries(leagueSummary).map(([k, v]) => [k, v.yeokbae])), '역배 케이스');
+        
+        // 정배 케이스 요약 및 상세 정보
+        summaryHtml += createSummaryTable(leagueSummary.jeongbae, '정배 케이스');
+        summaryHtml += createMatchDetailsTable(details.details, '정배 케이스', true, `${type}-jeongbae-details`);
+        
+        // 역배 케이스 요약 및 상세 정보
+        summaryHtml += createSummaryTable(leagueSummary.yeokbae, '역배 케이스');
+        summaryHtml += createMatchDetailsTable(details.details, '역배 케이스', false, `${type}-yeokbae-details`);
         
         summaryContainer.innerHTML = summaryHtml;
-
-        // 상세 매치 정보 테이블 생성
-        let detailsHtml = '<h4>상세 매치 정보</h4>';
-        detailsHtml += '<table class="match-details">';
-        detailsHtml += `<tr><th>리그</th><th>날짜</th><th>홈팀</th><th>어웨이팀</th><th>FTHG</th><th>FTAG</th><th>${oddsPrefix}H</th><th>${oddsPrefix}D</th><th>${oddsPrefix}A</th><th>결과</th><th>케이스</th></tr>`;
-    
-        details.details.forEach(detail => {
-            const isJeongbae = detail[`${oddsPrefix}H`] < detail[`${oddsPrefix}A`];
-            const homeOddsStyle = isJeongbae ? 'font-weight: bold;' : '';
-            const awayOddsStyle = !isJeongbae ? 'font-weight: bold;' : '';
-            
-            detailsHtml += `<tr>
-                <td>${detail.League}</td>
-                <td>${decodeExcelDate(detail.Date)}</td>
-                <td>${detail.HomeTeam}</td>
-                <td>${detail.AwayTeam}</td>
-                <td>${detail.FTHG}</td>
-                <td>${detail.FTAG}</td>
-                <td style="${homeOddsStyle}">${detail[`${oddsPrefix}H`].toFixed(2)}</td>
-                <td>${detail[`${oddsPrefix}D`].toFixed(2)}</td>
-                <td style="${awayOddsStyle}">${detail[`${oddsPrefix}A`].toFixed(2)}</td>
-                <td>${detail.Result}</td>
-                <td>${isJeongbae ? '정배' : '역배'}</td>
-            </tr>`;
-        });
-
-        detailsHtml += '</table>';
-        detailsContainer.innerHTML = detailsHtml;
+        detailsContainer.innerHTML = ''; // 기존 detailsContainer는 비워둠
     } else if (!forceUpdate) {
         detailsRow.style.display = 'none';
+    }
+}
+
+// 매치 상세 정보 토글 함수 추가
+function toggleMatchDetails(containerId) {
+    const container = document.getElementById(containerId);
+    const button = container.previousElementSibling.querySelector('.toggle-details-btn');
+    
+    if (container.style.display === 'none') {
+        container.style.display = 'block';
+        button.textContent = '닫기';
+    } else {
+        container.style.display = 'none';
+        button.textContent = '열기';
     }
 }
 

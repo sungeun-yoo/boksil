@@ -484,3 +484,36 @@
 .league-summary .total-row td {
     font-weight: bold;
 }
+
+.match-details-section {
+    margin: 20px 0;
+}
+
+.match-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.match-details-header h5 {
+    margin: 0;
+}
+
+.toggle-details-btn {
+    padding: 5px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.toggle-details-btn:hover {
+    background-color: #45a049;
+}
+
+.match-details-container {
+    margin-top: 10px;
+}
