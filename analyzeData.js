@@ -9,10 +9,45 @@ let analysisDetails = {
     currentLeagueMatchSample: []
 };
 
+function rerunSearch(entry) {
+    // 체크박스 리그 선택 업데이트
+    document.querySelectorAll('input[name="league"]').forEach(checkbox => {
+        checkbox.checked = entry.selectedLeagues.includes(checkbox.value);
+    });
+    updateSelectedLeagues();
+
+    // currentLeague 업데이트
+    const currentLeagueSelect = document.getElementById('currentLeague');
+    if (currentLeagueSelect) {
+        currentLeagueSelect.value = entry.currentLeague || '';
+        currentLeague = entry.currentLeague || '';
+    }
+
+    // 배당값 설정
+    document.querySelector('input[name="win"]').value = entry.odds.win;
+    document.querySelector('input[name="draw"]').value = entry.odds.draw;
+    document.querySelector('input[name="lose"]').value = entry.odds.lose;
+
+    // 검색 실행
+    processData();
+}
+
 function analyzeData(keepDetailsOpen = false) {
     console.log('analyzeData function called');
     const inputValues = getInputValues();
     const detailedMargins = getDetailedMargins();
+
+    // 이벤트 발생 시 currentLeague도 포함
+    const searchEvent = new CustomEvent('searchCompleted', {
+        detail: {
+            selectedLeagues, // 체크된 리그들
+            currentLeague,   // 선택된 단일 리그
+            win: inputValues.win,
+            draw: inputValues.draw,
+            lose: inputValues.lose
+        }
+    });
+    window.dispatchEvent(searchEvent);
 
     console.log('Input values:', inputValues);
     console.log('Detailed margins:', detailedMargins);

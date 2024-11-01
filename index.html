@@ -6,8 +6,15 @@
     <title>복실이 분석기</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        
+    <!-- React 관련 스크립트 -->
+    <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
 </head>
 <body>
+    <!-- 사이드바  -->
     <div class="background-image"></div>
     <div class="content">
         <h1>복실이 분석기 v.1.1.6</h1>
@@ -17,8 +24,9 @@
             <input type="file" id="excelFile" accept=".xlsx, .xls">
             <button onclick="loadExcelFile()">파일 로드</button>
         </div>
-
+        
         <div id="analysisScreen" style="display: none;">
+            <div id="sidebar-root"></div>
             <!-- 복실이 존재감 슬라이더 -->
             <div class="boksil-presence">
                 <label for="boksilOpacity">복실이 존재감:</label>
@@ -284,5 +292,312 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script src="search.js"></script>
     <script src="analyzeData.js"></script>
+    <script type="text/babel">
+        // React hooks 가져오기
+        const { useState, useEffect } = React;
+        
+        const Sidebar = () => {
+          const [isOpen, setIsOpen] = useState(true);
+          const [searchHistory, setSearchHistory] = useState([]);
+          const [showSettings, setShowSettings] = useState(false);
+              
+          useEffect(() => {
+            const savedHistory = localStorage.getItem('searchHistory');
+            if (savedHistory) {
+              setSearchHistory(JSON.parse(savedHistory));
+            }
+        
+            window.addEventListener('searchCompleted', handleSearchCompleted);
+            return () => window.removeEventListener('searchCompleted', handleSearchCompleted);
+          }, []);
+        
+          const handleSearchCompleted = (event) => {
+            const { selectedLeagues, currentLeague, win, draw, lose } = event.detail;
+            
+            const newEntry = {
+            id: Date.now(),
+            timestamp: new Date().toLocaleString(),
+            selectedLeagues,
+            currentLeague,
+            odds: { win, draw, lose }
+            };
+
+            setSearchHistory(prevHistory => {
+            const lastEntry = prevHistory[0];
+            if (lastEntry && 
+                lastEntry.currentLeague === currentLeague &&
+                JSON.stringify(lastEntry.selectedLeagues) === JSON.stringify(selectedLeagues) &&
+                lastEntry.odds.win === win &&
+                lastEntry.odds.draw === draw &&
+                lastEntry.odds.lose === lose) {
+                return prevHistory;
+            }
+            
+            const updatedHistory = [newEntry, ...prevHistory];
+            localStorage.setItem('searchHistory', JSON.stringify(updatedHistory));
+            return updatedHistory;
+            });
+        };
+        
+          const deleteHistoryEntry = (id) => {
+            setSearchHistory(prevHistory => {
+              const updatedHistory = prevHistory.filter(entry => entry.id !== id);
+              localStorage.setItem('searchHistory', JSON.stringify(updatedHistory));
+              return updatedHistory;
+            });
+          };
+        
+          const clearHistory = () => {
+            setSearchHistory([]);
+            localStorage.removeItem('searchHistory');
+          };
+          
+          const handleHistoryClick = (entry) => {
+              // rerunSearch 함수 호출
+              rerunSearch(entry);
+          };        
+          
+          return (
+            <div className="relative">
+              <button 
+                onClick={() => setIsOpen(!isOpen)}
+                style={{
+                  position: 'absolute',
+                  top: '1rem',
+                  right: '-2rem',
+                  backgroundColor: '#e5e7eb',
+                  padding: '0.25rem',
+                  borderRadius: '0 0.25rem 0.25rem 0',
+                  cursor: 'pointer',
+                  border: 'none'
+                }}
+              >
+                {isOpen ? '◀' : '▶'}
+              </button>
+        
+              <div style={{
+                height: '100vh',
+                width: '256px',
+                backgroundColor: 'white',
+                boxShadow: '2px 0 8px rgba(0,0,0,0.1)',
+                transition: 'transform 0.3s',
+                transform: isOpen ? 'translateX(0)' : 'translateX(-256px)',
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                zIndex: 50,
+                display: 'flex',
+                flexDirection: 'column'
+            }}>
+                <div style={{
+                flex: 1,
+                overflowY: 'auto',
+                padding: '1rem'
+                }}>
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '1rem'
+                }}>
+                    <h2 style={{
+                    fontSize: '1.125rem',
+                    fontWeight: '600',
+                    }}>
+                    📜 검색 기록
+                    </h2>
+                    <button
+                    onClick={clearHistory}
+                    style={{
+                        fontSize: '0.875rem',
+                        color: '#ef4444',
+                        border: 'none',
+                        background: 'none',
+                        cursor: 'pointer'
+                    }}
+                    >
+                    전체 삭제
+                    </button>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {searchHistory.map(entry => (
+                    <div
+                        key={entry.id}
+                        onClick={() => handleHistoryClick(entry)}
+                        style={{
+                            backgroundColor: '#f9fafb',
+                            padding: '0.5rem 1rem',
+                            borderRadius: '0.5rem',
+                            position: 'relative',
+                            cursor: 'pointer',
+                            transition: 'background-color 0.2s'
+                        }}
+                        onMouseOver={e => {
+                            e.currentTarget.style.backgroundColor = '#f0f1f3';
+                            const deleteButton = e.currentTarget.querySelector('.delete-button');
+                            if (deleteButton) deleteButton.style.opacity = '1';
+                        }}
+                        onMouseOut={e => {
+                            e.currentTarget.style.backgroundColor = '#f9fafb';
+                            const deleteButton = e.currentTarget.querySelector('.delete-button');
+                            if (deleteButton) deleteButton.style.opacity = '0';
+                        }}
+                    >
+                        <div style={{ 
+                            fontSize: '0.75rem', 
+                            color: '#6b7280',
+                            marginBottom: '0.25rem'
+                        }}>
+                            {entry.timestamp}
+                        </div>
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            fontSize: '0.875rem'
+                        }}>
+                            <span style={{ 
+                                minWidth: '30px',
+                                color: entry.currentLeague ? '#4b5563' : '#9ca3af'
+                            }}>
+                                {entry.currentLeague || 'X'}
+                            </span>
+                            <div style={{
+                                display: 'flex',
+                                gap: '1rem',
+                                color: '#4b5563'
+                            }}>
+                                <span>{entry.odds.win}</span>
+                                <span>{entry.odds.draw}</span>
+                                <span>{entry.odds.lose}</span>
+                            </div>
+                        </div>
+                        <button
+                            className="delete-button"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                deleteHistoryEntry(entry.id);
+                            }}
+                            style={{
+                                position: 'absolute',
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                right: '0.75rem',
+                                width: '20px',
+                                height: '20px',
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                border: 'none',
+                                background: '#e5e7eb',
+                                cursor: 'pointer',
+                                opacity: 0,
+                                transition: 'all 0.2s',
+                                fontSize: '12px',
+                                color: '#4b5563'
+                            }}
+                            onMouseOver={e => {
+                                e.currentTarget.style.background = '#d1d5db';
+                            }}
+                            onMouseOut={e => {
+                                e.currentTarget.style.background = '#e5e7eb';
+                            }}
+                        >
+                            ✕
+                        </button>
+                    </div>
+                ))}
+                    {searchHistory.length === 0 && (
+                    <div style={{
+                        color: '#6b7280',
+                        textAlign: 'center',
+                        padding: '1rem 0'
+                    }}>
+                        검색 기록이 없습니다
+                    </div>
+                    )}
+                </div>
+                </div>
+        
+                <div style={{
+                  borderTop: '1px solid #e5e7eb',
+                  padding: '1rem'
+                }}>
+                  <button
+                    onClick={() => setShowSettings(!showSettings)}
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '0.5rem',
+                      border: 'none',
+                      background: 'none',
+                      cursor: 'pointer',
+                      borderRadius: '0.25rem'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      ⚙️ 설정
+                    </div>
+                    <span style={{
+                      transform: showSettings ? 'rotate(90deg)' : 'none',
+                      transition: 'transform 0.2s'
+                    }}>
+                      ▶
+                    </span>
+                  </button>
+                  
+                  {showSettings && (
+                    <div style={{ marginLeft: '2rem' }}>
+                      <button style={{
+                        width: '100%',
+                        textAlign: 'left',
+                        padding: '0.5rem',
+                        fontSize: '0.875rem',
+                        border: 'none',
+                        background: 'none',
+                        cursor: 'pointer',
+                        borderRadius: '0.25rem'
+                      }}>
+                        다크 모드
+                      </button>
+                      <button style={{
+                        width: '100%',
+                        textAlign: 'left',
+                        padding: '0.5rem',
+                        fontSize: '0.875rem',
+                        border: 'none',
+                        background: 'none',
+                        cursor: 'pointer',
+                        borderRadius: '0.25rem'
+                      }}>
+                        알림 설정
+                      </button>
+                    </div>
+                  )}
+        
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: '0.5rem',
+                    marginTop: '0.5rem'
+                  }}>
+                    👤 사용자 프로필
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        };
+        
+        // 사이드바 렌더링
+        ReactDOM.render(
+          <Sidebar />,
+          document.getElementById('sidebar-root')
+        );
+        </script>
 </body>
 </html>

@@ -517,3 +517,19 @@
 .match-details-container {
     margin-top: 10px;
 }
+
+/* styles.css에 추가 */
+.content {
+    transition: margin-left 0.3s ease;
+    margin-left: 256px; /* 사이드바가 열려있을 때의 여백 */
+}
+
+.content.sidebar-collapsed {
+    margin-left: 0; /* 사이드바가 닫혀있을 때의 여백 */
+}
+
+@media (max-width: 768px) {
+    .content {
+        margin-left: 0;
+    }
+}
