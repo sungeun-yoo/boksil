@@ -440,7 +440,18 @@ function showDetails(type, forceUpdate = false) {
             return html;
         }
         
-        const oddsTypeText = oddsType === 'avg' ? '평균 배당' : 'Bet365 배당';
+        let oddsTypeText = oddsType === 'avg' ? '평균 배당' : 'Bet365 배당';
+        switch(oddsType) {
+            case 'avg':
+                oddsTypeText = '평균 배당';
+                break;
+            case 'b365':
+                oddsTypeText = 'Bet365 배당';
+                break;
+            case 'ps':
+                oddsTypeText = 'PS 배당';
+                break;
+        }
         let summaryHtml = `<h4>${title} - 리그별 요약 (${oddsTypeText})</h4>`;
         
         // 정배 케이스 요약 및 상세 정보
