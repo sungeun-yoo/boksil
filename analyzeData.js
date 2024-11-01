@@ -126,10 +126,10 @@ function analyzeMatches(inputValues, analysisType, selectedLeagueOnly = false, d
     return { results, details };
 }
 
-
-
 function getColumnIndices(headerRow) {
-    const columns = ['Date', 'HomeTeam', 'AwayTeam', 'AvgH', 'AvgD', 'AvgA', 'B365H', 'B365D', 'B365A', 'FTHG', 'FTAG'];
+    // 기존 컬럼에 Pinnacle Sports 배당 컬럼 추가
+    const columns = ['Date', 'HomeTeam', 'AwayTeam', 'AvgH', 'AvgD', 'AvgA', 
+                    'B365H', 'B365D', 'B365A', 'PSH', 'PSD', 'PSA', 'FTHG', 'FTAG'];
     return columns.reduce((acc, col) => {
         acc[col] = headerRow.indexOf(col);
         return acc;
@@ -138,6 +138,27 @@ function getColumnIndices(headerRow) {
 
 function extractMatchData(row, columnIndices) {
     const oddsType = document.querySelector('input[name="oddsType"]:checked').value;
+    let selectedOddsH, selectedOddsD, selectedOddsA;
+
+    // 선택된 배당사에 따라 배당 설정
+    switch(oddsType) {
+        case 'avg':
+            selectedOddsH = parseFloat(row[columnIndices.AvgH]);
+            selectedOddsD = parseFloat(row[columnIndices.AvgD]);
+            selectedOddsA = parseFloat(row[columnIndices.AvgA]);
+            break;
+        case 'b365':
+            selectedOddsH = parseFloat(row[columnIndices.B365H]);
+            selectedOddsD = parseFloat(row[columnIndices.B365D]);
+            selectedOddsA = parseFloat(row[columnIndices.B365A]);
+            break;
+        case 'ps':
+            selectedOddsH = parseFloat(row[columnIndices.PSH]);
+            selectedOddsD = parseFloat(row[columnIndices.PSD]);
+            selectedOddsA = parseFloat(row[columnIndices.PSA]);
+            break;
+    }
+
     return {
         Date: row[columnIndices.Date],
         HomeTeam: row[columnIndices.HomeTeam],
@@ -148,11 +169,14 @@ function extractMatchData(row, columnIndices) {
         B365H: parseFloat(row[columnIndices.B365H]),
         B365D: parseFloat(row[columnIndices.B365D]),
         B365A: parseFloat(row[columnIndices.B365A]),
+        PSH: parseFloat(row[columnIndices.PSH]),
+        PSD: parseFloat(row[columnIndices.PSD]),
+        PSA: parseFloat(row[columnIndices.PSA]),
         FTHG: parseInt(row[columnIndices.FTHG]),
         FTAG: parseInt(row[columnIndices.FTAG]),
-        OddsH: oddsType === 'avg' ? parseFloat(row[columnIndices.AvgH]) : parseFloat(row[columnIndices.B365H]),
-        OddsD: oddsType === 'avg' ? parseFloat(row[columnIndices.AvgD]) : parseFloat(row[columnIndices.B365D]),
-        OddsA: oddsType === 'avg' ? parseFloat(row[columnIndices.AvgA]) : parseFloat(row[columnIndices.B365A])
+        OddsH: selectedOddsH,
+        OddsD: selectedOddsD,
+        OddsA: selectedOddsA
     };
 }
 
@@ -284,7 +308,18 @@ function showDetails(type, forceUpdate = false) {
         }
 
         const oddsType = document.querySelector('input[name="oddsType"]:checked').value;
-        const oddsPrefix = oddsType === 'avg' ? 'Avg' : 'B365';
+        let oddsPrefix;
+        switch(oddsType) {
+            case 'avg':
+                oddsPrefix = 'Avg';
+                break;
+            case 'b365':
+                oddsPrefix = 'B365';
+                break;
+            case 'ps':
+                oddsPrefix = 'PS';
+                break;
+        }
         
         // 리그별 요약 데이터 생성 및 정배/역배 분리
         const leagueSummary = {
