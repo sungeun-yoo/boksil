@@ -1,5 +1,5 @@
 let workbook;
-const defaultLeagues = ['E0', 'SP1', 'I1', 'D1', 'N1', 'F1'];
+const defaultLeagues = ['EPL', 'EFL', 'Bundesliga', 'LaLiga', 'Serie A', 'Ligue 1', 'Eredivisie'];
 let selectedLeagues = [];
 let currentLeague = '';
 let minDate, maxDate;
