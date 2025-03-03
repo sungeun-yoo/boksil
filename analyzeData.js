@@ -377,7 +377,7 @@ function showDetails(type, forceUpdate = false) {
             leagueSummary[category][league].total++;
         });
 
-        // 테이블 생성 함수
+        // 테이블 생성 함수 - 리그별 요약
         function createSummaryTable(data, categoryTitle) {
             let html = `<h5>${categoryTitle}</h5>`;
             html += '<table class="league-summary">';
@@ -429,7 +429,19 @@ function showDetails(type, forceUpdate = false) {
             return html;
         }
 
+        // 매치 상세 정보 테이블 - 수정: 날짜 기준 최신순 정렬
         function createMatchDetailsTable(matchDetails, categoryTitle, isJeongbae, containerId) {
+            // 정배/역배 필터링 후 날짜 기준으로 내림차순 정렬
+            const sortedDetails = [...matchDetails].filter(detail => {
+                const detailIsJeongbae = detail[`${oddsPrefix}H`] < detail[`${oddsPrefix}A`];
+                return detailIsJeongbae === isJeongbae;
+            }).sort((a, b) => {
+                // 엑셀 날짜 형식을 Date 객체로 변환하여 비교
+                const dateA = new Date(decodeExcelDate(a.Date));
+                const dateB = new Date(decodeExcelDate(b.Date));
+                return dateB - dateA; // 내림차순 정렬 (최신 날짜가 먼저)
+            });
+            
             let html = `<div class="match-details-section">
                 <div class="match-details-header">
                     <h5>상세 매치 정보: ${categoryTitle}</h5>
@@ -450,10 +462,8 @@ function showDetails(type, forceUpdate = false) {
                             <th>결과</th>
                         </tr>`;
             
-            matchDetails.filter(detail => {
-                const detailIsJeongbae = detail[`${oddsPrefix}H`] < detail[`${oddsPrefix}A`];
-                return detailIsJeongbae === isJeongbae;
-            }).forEach(detail => {
+            // 정렬된 데이터로 테이블 생성
+            sortedDetails.forEach(detail => {
                 const homeOddsStyle = isJeongbae ? 'font-weight: bold;' : '';
                 const awayOddsStyle = !isJeongbae ? 'font-weight: bold;' : '';
                 
@@ -487,6 +497,7 @@ function showDetails(type, forceUpdate = false) {
                 oddsTypeText = 'PS 배당';
                 break;
         }
+        
         let summaryHtml = `<h4>${title} - 리그별 요약 (${oddsTypeText})</h4>`;
         
         // 정배 케이스 요약 및 상세 정보
