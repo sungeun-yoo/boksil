@@ -1,38 +1,33 @@
 
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
         body, html {
             height: 100%;
             margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'system-ui', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f4f7f9; /* Light grayish-blue background */
+            color: #333; /* Darker text for better contrast */
+        }
+
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0; /* Reset padding, will be handled by .content or specific sections */
         }
         
-        .background-image {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: url('./data/boksil.jpeg');
-            background-repeat: repeat;
-            background-size: auto;
-            opacity: 0.3; /* 여기서 투명도를 조절합니다. 0.0은 완전 투명, 1.0은 완전 불투명 */
-            z-index: -1;
-        }
+        /* Remove old background image style */
+        /* .background-image { ... } */
         
         .content {
             position: relative;
             z-index: 1;
-            padding: 20px;
-            color: #000; /* 텍스트 색상을 검정으로 설정 */
+            padding: 20px; /* Keep some padding for the main content area */
+            /* color: #000; /* Will inherit from body or be set specifically */
         }
         
         h1 {
             margin-top: 0;
+            color: #1a237e; /* Dark blue for main heading */
+            font-size: 2.5em; /* Larger H1 */
+            margin-bottom: 0.75em;
         }
         table {
             width: 100%;
@@ -40,28 +35,49 @@
             margin-bottom: 20px;
         }
         th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
+            /* border: 1px solid #ddd; */ /* Will be restyled later */
+            padding: 10px 12px; /* Increased padding */
             text-align: left;
+            border-bottom: 1px solid #e0e0e0; /* Lighter border for rows */
         }
         th {
-            background-color: #f2f2f2;
+            background-color: #e8eaf6; /* Light blue-gray for table headers */
+            color: #3f51b5; /* Indigo text for headers */
+            font-weight: 600; /* Bolder headers */
         }
-        input[type="number"] {
-            width: 100px;
-            padding: 5px;
+        input[type="number"],
+        input[type="text"], /* Added for consistency */
+        select { /* Added for consistency */
+            width: auto; /* Let them size naturally or be controlled by containers */
+            min-width: 100px; /* Ensure a minimum usable width */
+            padding: 10px; /* Increased padding */
             box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 6px; /* Rounded corners */
+            font-size: 0.95em;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
+
+        input[type="number"]:focus,
+        input[type="text"]:focus,
+        select:focus {
+            border-color: #3f51b5; /* Primary accent color on focus */
+            box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.2); /* Focus ring */
+            outline: none;
+        }
+
         button {
             padding: 10px 20px;
-            background-color: #4CAF50;
+            background-color: #3f51b5; /* Primary accent color (Indigo) */
             color: white;
             border: none;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 1em; /* Relative font size */
+            border-radius: 6px; /* Rounded corners */
+            transition: background-color 0.2s ease-in-out;
         }
         button:hover {
-            background-color: #45a049;
+            background-color: #303f9f; /* Darker shade on hover */
         }
         .excel-table {
             border-collapse: collapse;
@@ -69,19 +85,19 @@
             margin-top: 20px;
         }
         .excel-table th, .excel-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
+            /* border: 1px solid #ddd; */ /* Restyled with bottom borders */
+            padding: 10px 12px;
             text-align: left;
         }
         .excel-table th {
-            background-color: #f2f2f2;
-            font-weight: bold;
+            /* background-color: #f2f2f2; */ /* Using new global th style */
+            font-weight: 600;
         }
         .excel-table tr:nth-child(even) {
-            background-color: #f9f9f9;
+            background-color: #f8f9fa; /* Very light gray for even rows */
         }
         .excel-table tr:hover {
-            background-color: #f5f5f5;
+            background-color: #e9ecef; /* Slightly darker hover for rows */
         }
         .results-header {
             display: flex;
@@ -93,20 +109,23 @@
             margin: 0;
         }
         .results-header button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 10px;
+            /* padding: 10px 20px; */ /* Using new global button style */
+            /* background-color: #4CAF50; */ /* Using new global button style */
+            /* color: white; */ /* Using new global button style */
+            /* border: none; */ /* Using new global button style */
+            /* cursor: pointer; */ /* Using new global button style */
+            font-size: 0.9em; /* Slightly smaller for header buttons if needed */
         }
-        .results-header button:hover {
+        /* .results-header button:hover {
             background-color: #45a049;
-        }
+        } */ /* Handled by global button hover */
         .league-container {
             margin-bottom: 30px;
-            border: 1px solid #ddd;
+            border: 1px solid #e0e0e0; /* Lighter border */
             padding: 20px;
+            border-radius: 8px; /* Rounded corners for containers */
+            background-color: #fff; /* White background for containers */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Subtle shadow */
         }
         .league-container h3 {
             margin-top: 0;
@@ -133,30 +152,32 @@
         /* 기존 스타일은 그대로 유지 */
 
         .detail-button {
-            font-size: 0.8em;
-            padding: 2px 5px;
-            margin-left: 5px;
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            border-radius: 3px;
+            font-size: 0.85em;
+            padding: 4px 8px; /* More touch-friendly padding */
+            margin-left: 8px;
+            background-color: #e8eaf6; /* Light accent color */
+            color: #3f51b5; /* Primary accent text */
+            border: 1px solid #c5cae9; /* Softer border */
+            border-radius: 4px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.2s, border-color 0.2s;
         }
 
         .detail-button:hover {
-            background-color: #e0e0e0;
+            background-color: #d1d9ff; /* Lighter on hover */
+            border-color: #aab4f1;
         }
 
         .results-table th,
         .results-table td {
-            padding: 8px;
+            padding: 10px 12px; /* Consistent padding */
             text-align: center;
-            border: 1px solid #ddd;
+            /* border: 1px solid #ddd; */ /* Handled by global td/th style */
         }
         
         .results-table th {
-            background-color: #f2f2f2;
-            font-weight: bold;
+            /* background-color: #f2f2f2; */ /* Handled by global th style */
+            font-weight: 600; /* Handled by global th style */
         }
         
         /* 높은 값에 대한 색상 스타일 */
@@ -177,9 +198,10 @@
         .details-content {
             max-height: 500px;
             overflow-y: auto;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-top: 1px solid #ddd;
+            padding: 15px; /* Increased padding */
+            background-color: #fff; /* Cleaner white background */
+            border-top: 1px solid #e0e0e0; /* Lighter border */
+            border-radius: 0 0 6px 6px; /* Rounded bottom corners if it's a distinct panel */
         }
         
         .summary-container {
@@ -203,15 +225,15 @@
         .league-summary td,
         .match-details th,
         .match-details td {
-            border: 1px solid #ddd;
-            padding: 8px;
+            /* border: 1px solid #ddd; */ /* Handled by global td/th style */
+            padding: 10px 12px; /* Consistent padding */
             text-align: center;
         }
         
         .league-summary th,
         .match-details th {
-            background-color: #f2f2f2;
-            font-weight: bold;
+            /* background-color: #f2f2f2; */ /* Handled by global th style */
+            /* font-weight: bold; */ /* Handled by global th style */
             position: sticky;
             top: 0;
             z-index: 10;
@@ -219,12 +241,12 @@
         
         .league-summary tr:nth-child(even),
         .match-details tr:nth-child(even) {
-            background-color: #f9f9f9;
+            background-color: #f8f9fa; /* Consistent even row color */
         }
         
         .league-summary tr:hover,
         .match-details tr:hover {
-            background-color: #f5f5f5;
+            background-color: #e9ecef; /* Consistent hover color */
         }
         .league-summary h5 {
             margin-top: 20px;
@@ -232,23 +254,18 @@
         }
 
         .details-content h4 {
-            margin-top: 20px;
+            margin-top: 15px; /* Adjusted margin */
             margin-bottom: 10px;
             position: sticky;
             top: 0;
-            background-color: #f9f9f9;
+            background-color: #fff; /* Match new .details-content background */
             z-index: 20;
-            padding: 10px 0;
+            padding: 10px; /* Add horizontal padding */
+            border-bottom: 1px solid #e0e0e0; /* Separator for sticky header */
+            color: #3f51b5; /* Accent color for these headers */
         }
 
-
-        .details-content {
-    max-height: 500px;
-    overflow-y: auto;
-    padding: 10px;
-    background-color: #f9f9f9;
-    border-top: 1px solid #ddd;
-}
+/* Removed duplicate .details-content */
 
 .summary-container {
     margin-bottom: 20px;
@@ -263,17 +280,17 @@
     font-size: 0.9em;
 }
 
-.league-summary th, .league-summary td,
+/* .league-summary th, .league-summary td,
 .match-details th, .match-details td {
-    border: 1px solid #ddd;
+    border: 1px solid #ddd;  -- Already handled by global styles --
     padding: 8px;
     text-align: center;
-}
+} */
 
-.league-summary th,
+/* .league-summary th,
 .match-details th {
-    background-color: #f2f2f2;
-    font-weight: bold;
+    background-color: #f2f2f2; -- Already handled by global styles --
+    font-weight: bold; -- Already handled by global styles --
 }
 
 
@@ -297,51 +314,55 @@
 }
 
 #searchForm td {
-    padding: 5px;
+    padding: 8px; /* Increased padding */
     text-align: center;
+    vertical-align: middle; /* Align items nicely in cells */
 }
 
 #searchForm input[type="number"],
 #searchForm select {
-    width: 100%;
-    padding: 5px;
+    width: 100%; /* Keep full width within table cell */
+    /* padding: 5px; */ /* Handled by global input style */
     box-sizing: border-box;
 }
 
 #searchForm button,
 #marginSettings button {
-    padding: 10px 15px;
+    /* padding: 10px 15px; */ /* Handled by global button style */
     margin-right: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
+    /* background-color: #4CAF50; */ /* Handled by global button style */
+    /* color: white; */ /* Handled by global button style */
+    /* border: none; */ /* Handled by global button style */
+    /* cursor: pointer; */ /* Handled by global button style */
+    font-size: 0.95em; /* Slightly adjusted font size */
 }
 
-#searchForm button:hover,
+/* #searchForm button:hover,
 #marginSettings button:hover {
     background-color: #45a049;
-}
+} */ /* Handled by global button hover */
 
 #marginSettings {
-    background-color: #f0f0f0;
-    border: 1px solid #ddd;
-    padding: 15px;
+    background-color: #fff; /* White background */
+    border: 1px solid #e0e0e0; /* Lighter border */
+    padding: 20px; /* Increased padding */
     margin-top: 20px;
-    border-radius: 5px;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Subtle shadow */
 }
 
 #marginSettings h3 {
     margin-top: 0;
-    margin-bottom: 15px;
-    color: #333;
+    margin-bottom: 20px; /* Increased margin */
+    color: #3f51b5; /* Accent color */
+    font-size: 1.4em;
 }
 
 #marginSettings h4 {
-    margin-top: 15px;
+    margin-top: 20px; /* Increased margin */
     margin-bottom: 10px;
-    color: #444;
+    color: #555; /* Slightly lighter heading color */
+    font-size: 1.1em;
 }
 
 #marginSettings div {
@@ -411,11 +432,11 @@
 }
 
 #marginSettings input[type="number"] {
-    width: calc(33.33% - 3px);
-    padding: 3px;
-    margin-right: 3px;
+    width: calc(33.33% - 6px); /* Adjust width considering new padding/margins */
+    /* padding: 3px; */ /* Handled by global input style */
+    margin-right: 8px; /* Increased margin */
     box-sizing: border-box;
-    font-size: 12px;
+    font-size: 0.9em; /* Adjusted font size */
 }
 
 #marginSettings input[type="number"]:last-child {
@@ -424,57 +445,72 @@
 
 #marginSettings button {
     display: block;
-    margin-top: 10px;
-    padding: 5px 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 12px;
-    width: 100%; /* 버튼 너비를 100%로 설정 */
+    margin-top: 20px; /* Increased margin */
+    /* padding: 5px 10px; */ /* Handled by global button style */
+    /* background-color: #4CAF50; */ /* Handled by global button style */
+    /* color: white; */ /* Handled by global button style */
+    /* border: none; */ /* Handled by global button style */
+    /* cursor: pointer; */ /* Handled by global button style */
+    font-size: 1em; /* Consistent button font size */
+    width: 100%;
 }
 
-#marginSettings button:hover {
+/* #marginSettings button:hover {
     background-color: #45a049;
-}
+} */ /* Handled by global button style */
 
-#dateRangeFilter {
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-
-#dateSlider {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-#dateDisplay {
-    text-align: center;
-    font-weight: bold;
-}
+#dateRangeFilter,
 #yearlyDateRangeFilter {
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
+#dateRangeFilter h3,
+#yearlyDateRangeFilter h3 {
+    color: #3f51b5; /* Accent color for heading */
+    margin-top:0;
+    margin-bottom: 15px;
+}
+
+
+#dateSlider,
 #yearlyDateSlider {
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
 
+#dateDisplay,
 #yearlyDateDisplay {
     text-align: center;
-    font-weight: bold;
+    font-weight: 600; /* Bolder display */
+    color: #333;
+    font-size: 1.05em;
 }
 
-
 #oddsSelection {
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 15px;
+    margin-bottom: 20px; /* Increased margin */
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 #oddsSelection label {
     margin-right: 20px;
+    font-size: 0.95em;
+    color: #444;
+}
+
+#oddsSelection input[type="radio"] {
+    margin-right: 5px;
+    accent-color: #3f51b5; /* Modern way to style radio button color */
 }
 .league-summary .total-row {
     border-top: 2px solid #333;
@@ -501,35 +537,159 @@
 }
 
 .toggle-details-btn {
-    padding: 5px 15px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
+    /* padding: 5px 15px; */ /* Handled by global button style */
+    /* background-color: #4CAF50; */ /* Handled by global button style */
+    /* color: white; */ /* Handled by global button style */
+    /* border: none; */ /* Handled by global button style */
+    border-radius: 6px; /* Consistent with global button style */
+    /* cursor: pointer; */ /* Handled by global button style */
+    font-size: 0.9em; /* Slightly smaller if needed */
 }
 
-.toggle-details-btn:hover {
+/* .toggle-details-btn:hover {
     background-color: #45a049;
+} */ /* Handled by global button hover */
 }
 
 .match-details-container {
     margin-top: 10px;
 }
 
-/* styles.css에 추가 */
+/* General h2, h3, h4, h5 styling */
+h2, h3, h4, h5, h6 {
+    color: #2c3e50; /* Dark grayish blue for subheadings */
+    margin-top: 1.5em;
+    margin-bottom: 0.75em;
+    font-weight: 600;
+}
+
+h2 { font-size: 1.8em; }
+h3 { font-size: 1.5em; }
+h4 { font-size: 1.2em; }
+h5 { font-size: 1.1em; }
+h6 { font-size: 1em; }
+
+/* Styling for league selection toggle */
+.league-toggle {
+    cursor: pointer;
+    user-select: none;
+    font-size: 1.2em;
+    color: #3f51b5;
+    margin-bottom: 10px;
+    display: inline-block;
+    padding: 8px 0;
+}
+
+.league-checkboxes {
+    display: none;
+    margin-top: 10px;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.league-checkboxes label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.95em;
+}
+
+.league-checkboxes input[type="checkbox"] {
+    margin-right: 8px;
+    accent-color: #3f51b5;
+}
+
+
+/* Sidebar related styles - targeting elements from React component */
+/* These are guesses based on inline styles in the HTML.
+   Actual effectiveness depends on React component's output. */
+
+/* Sidebar container guess */
+div[style*="height: 100vh"][style*="width: 256px"] {
+    background-color: #ffffff !important; /* Override inline style if necessary */
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1) !important;
+    border-right: 1px solid #e0e0e0;
+}
+
+/* Sidebar toggle button guess */
+button[style*="position: absolute"][style*="right: -2rem"] {
+    background-color: #e8eaf6 !important; /* Lighter, softer color */
+    color: #3f51b5 !important;
+    border-radius: 0 6px 6px 0 !important;
+    padding: 0.5rem !important;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Sidebar history entry guess */
+div[style*="backgroundColor: rgb(249, 250, 251)"] { /* Targeting #f9fafb */
+    background-color: #f8f9fa !important;
+    border-radius: 8px !important;
+    padding: 0.75rem 1rem !important; /* Slightly more padding */
+    transition: background-color 0.2s ease-in-out !important;
+}
+
+div[style*="backgroundColor: rgb(249, 250, 251)"]:hover {
+    background-color: #e9ecef !important;
+}
+
+
+/* Sidebar settings button guess */
+button[style*="width: 100%"][style*="justify-content: space-between"] > div[style*="display: flex"] {
+    color: #3f51b5;
+    font-weight: 500;
+}
+
+/* Boksil presence slider styling */
+.boksil-presence {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.boksil-presence label {
+    margin-right: 10px;
+    font-size: 0.95em;
+    color: #333;
+}
+
+#boksilOpacity {
+    width: 200px;
+    accent-color: #3f51b5; /* Modern way to style range input track */
+}
+
+
+/* Ensure content adjusts with sidebar */
 .content {
     transition: margin-left 0.3s ease;
-    margin-left: 256px; /* 사이드바가 열려있을 때의 여백 */
+    margin-left: 256px; /* Default when sidebar is open */
+    padding-top: 20px; /* Add some top padding */
+    padding-bottom: 40px; /* Add some bottom padding */
 }
 
 .content.sidebar-collapsed {
-    margin-left: 0; /* 사이드바가 닫혀있을 때의 여백 */
+    margin-left: 0;
 }
 
 @media (max-width: 768px) {
     .content {
-        margin-left: 0;
+        margin-left: 0 !important; /* Important to override JS-set style if sidebar state is managed by JS */
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    /* Potentially hide sidebar or make it overlay on mobile */
+    div[style*="height: 100vh"][style*="width: 256px"] {
+        transform: translateX(-256px) !important; /* Hide sidebar by default on mobile if it's open */
+        /* Add more styles if an open/close button for mobile is implemented */
+    }
+    button[style*="position: absolute"][style*="right: -2rem"] {
+        /* Adjustments for mobile toggle if needed, or hide it if sidebar is always closed/overlay */
     }
 }
