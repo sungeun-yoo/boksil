@@ -187,8 +187,11 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function showAnalysisScreen() {
-    document.getElementById('fileSelectionScreen').style.display = 'none';
-    document.getElementById('analysisScreen').style.display = 'block';
+    // document.getElementById('fileSelectionScreen').style.display = 'none';
+    // document.getElementById('analysisScreen').style.display = 'block';
+    $('#fileSelectionScreen').fadeOut(() => {
+        $('#analysisScreen').fadeIn();
+    });
 }
 
 function createLeagueCheckboxes() {
@@ -275,15 +278,16 @@ function updateLeagueTable() {
 }
 
 function toggleLeagueCheckboxes() {
-    const leagueCheckboxes = document.querySelector('.league-checkboxes');
-    const leagueToggle = document.querySelector('.league-toggle');
-    if (leagueCheckboxes.style.display === 'none' || leagueCheckboxes.style.display === '') {
-        leagueCheckboxes.style.display = 'block';
-        leagueToggle.textContent = '리그 선택 (닫기)';
-    } else {
-        leagueCheckboxes.style.display = 'none';
-        leagueToggle.textContent = '리그 선택 (열기)';
-    }
+    const leagueCheckboxes = $('.league-checkboxes');
+    const leagueToggle = $('.league-toggle');
+    
+    leagueCheckboxes.slideToggle(function() {
+        if (leagueCheckboxes.is(':visible')) {
+            leagueToggle.text('리그 선택 (닫기)');
+        } else {
+            leagueToggle.text('리그 선택 (열기)');
+        }
+    });
 }
 
 let detailedMargins = {
@@ -296,8 +300,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // 기존 이벤트 리스너 유지
 
     document.getElementById('marginSettingsButton').addEventListener('click', function() {
-        const marginSettings = document.getElementById('marginSettings');
-        marginSettings.style.display = marginSettings.style.display === 'none' ? 'block' : 'none';
+        // const marginSettings = document.getElementById('marginSettings');
+        // marginSettings.style.display = marginSettings.style.display === 'none' ? 'block' : 'none';
+        $('#marginSettings').slideToggle();
     });
 
     document.getElementById('applyMarginSettings').addEventListener('click', function() {
@@ -319,8 +324,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         };
 
-        const marginSettings = document.getElementById('marginSettings');
-        marginSettings.style.display = marginSettings.style.display === 'none' ? 'block' : 'none';
+        // const marginSettings = document.getElementById('marginSettings');
+        // marginSettings.style.display = marginSettings.style.display === 'none' ? 'block' : 'none';
+        // It's common to hide the settings panel after applying, so slideUp if it's visible.
+        // If the intent is to toggle, then slideToggle would be used.
+        // For now, let's assume it should hide after applying.
+        $('#marginSettings').slideUp(); 
         console.log('Updated margins:', detailedMargins);          
     });
     // 배당 유형 선택 라디오 버튼에 이벤트 리스너 추가
@@ -333,10 +342,11 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function closeAllDetails() {
-    const detailsRows = document.querySelectorAll('.details-row');
-    detailsRows.forEach(row => {
-        row.style.display = 'none';
-    });
+    // const detailsRows = document.querySelectorAll('.details-row');
+    // detailsRows.forEach(row => {
+    //     row.style.display = 'none';
+    // });
+    $('.details-row').slideUp(); // Use slideUp for consistency
 }
 
 function processData(keepDetailsOpen = false) {
