@@ -307,28 +307,25 @@ function decodeExcelDate(excelDate) {
 
 // 모든 상세 창을 닫는 함수 (search.js에 있는 것과 동일)
 function closeAllDetails() {
-    // const detailsRows = document.querySelectorAll('.details-row');
-    // detailsRows.forEach(row => {
-    //     row.style.display = 'none';
-    // });
-    $('.details-row').slideUp(); // Use jQuery slideUp
+    const detailsRows = document.querySelectorAll('.details-row');
+    detailsRows.forEach(row => {
+        row.style.display = 'none';
+    });
 }
 
 function showDetails(type, forceUpdate = false) {
-    const detailsRow = $(`#${type}-details`); // Use jQuery selector
-    const detailsContent = detailsRow.find('.details-content'); // Use jQuery find
-    const summaryContainer = detailsContent.find('.summary-container'); // Use jQuery find
-    const detailsContainer = detailsContent.find('.details-container'); // Use jQuery find
+    const detailsRow = document.getElementById(`${type}-details`);
+    const detailsContent = detailsRow.querySelector('.details-content');
+    const summaryContainer = detailsContent.querySelector('.summary-container');
+    const detailsContainer = detailsContent.querySelector('.details-container');
 
-    // If forceUpdate is true, we always proceed to update content and ensure it's visible.
-    // If forceUpdate is false, we toggle.
-    if (forceUpdate) {
-        // Update content first
+    if (detailsRow.style.display === 'none' || forceUpdate) {
+        detailsRow.style.display = 'table-row';
         const details = analysisDetails[type];
+        
         if (!details || !details.details || details.details.length === 0) {
-            summaryContainer.html('<p>데이터가 없습니다.</p>'); // Use jQuery html
-            detailsContainer.html(''); // Use jQuery html
-            detailsRow.slideDown(); // Ensure it's visible
+            summaryContainer.innerHTML = '<p>데이터가 없습니다.</p>';
+            detailsContainer.innerHTML = '';
             return;
         }
 
@@ -345,7 +342,7 @@ function showDetails(type, forceUpdate = false) {
             default: title = '상세 결과';
         }
 
-        const oddsType = $('input[name="oddsType"]:checked').val(); // Use jQuery val
+        const oddsType = document.querySelector('input[name="oddsType"]:checked').value;
         let oddsPrefix;
         switch(oddsType) {
             case 'avg':
@@ -511,76 +508,25 @@ function showDetails(type, forceUpdate = false) {
         summaryHtml += createSummaryTable(leagueSummary.yeokbae, '역배 케이스');
         summaryHtml += createMatchDetailsTable(details.details, '역배 케이스', false, `${type}-yeokbae-details`);
         
-        summaryContainer.html(summaryHtml); // Use jQuery html
-        detailsContainer.html(''); // 기존 detailsContainer는 비워둠
-        detailsRow.slideDown(); // Ensure it's visible after updating
-    } else {
-        // Not forceUpdate, so just toggle
-        // If detailsRow is about to be shown, update its content
-        if (!detailsRow.is(':visible')) {
-            const details = analysisDetails[type];
-            if (!details || !details.details || details.details.length === 0) {
-                summaryContainer.html('<p>데이터가 없습니다.</p>');
-                detailsContainer.html('');
-            } else {
-                // Simplified content update for toggle-show, full logic is above for forceUpdate
-                let title;
-                switch(type) {
-                    case 'jeongbae': title = '정배 표본 상세 결과'; break;
-                    case 'jeongbaeMu': title = '정배+무 표본 상세 결과'; break;
-                    case 'yeokbae': title = '역배 표본 상세 결과'; break;
-                    case 'yeokbaeMu': title = '역배+무 표본 상세 결과'; break;
-                    case 'selectedLeagueJeongbaeMu': title = '해당리그 정배+무 표본 상세 결과'; break;
-                    case 'selectedLeagueYeokbaeMu': title = '해당리그 역배+무 표본 상세 결과'; break;
-                    case 'allMatchSample': title = '승(무)패 일치 표본 상세 결과'; break;
-                    case 'currentLeagueMatchSample': title = '당리그 승무패 일치 표본 상세 결과'; break;
-                    default: title = '상세 결과';
-                }
-                const oddsType = $('input[name="oddsType"]:checked').val();
-                let oddsPrefix;
-                switch(oddsType) {
-                    case 'avg': oddsPrefix = 'Avg'; break;
-                    case 'b365': oddsPrefix = 'B365'; break;
-                    case 'ps': oddsPrefix = 'PS'; break;
-                }
-                const leagueSummary = { jeongbae: {}, yeokbae: {} };
-                details.details.forEach(detail => {
-                    const isJeongbae = detail[`${oddsPrefix}H`] < detail[`${oddsPrefix}A`];
-                    const category = isJeongbae ? 'jeongbae' : 'yeokbae';
-                    const league = detail.League;
-                    if (!leagueSummary[category][league]) {
-                        leagueSummary[category][league] = { '핸승': 0, '핸무': 0, '무': 0, '역': 0, 'total': 0 };
-                    }
-                    leagueSummary[category][league][detail.Result]++;
-                    leagueSummary[category][league].total++;
-                });
-
-                // Re-use createSummaryTable and createMatchDetailsTable functions (assuming they are defined as before)
-                let summaryHtml = `<h4>${title} - 리그별 요약 (${oddsType === 'avg' ? '평균 배당' : oddsType === 'b365' ? 'Bet365 배당' : 'PS 배당'})</h4>`;
-                summaryHtml += createSummaryTable(leagueSummary.jeongbae, '정배 케이스');
-                summaryHtml += createMatchDetailsTable(details.details, '정배 케이스', true, `${type}-jeongbae-details`);
-                summaryHtml += createSummaryTable(leagueSummary.yeokbae, '역배 케이스');
-                summaryHtml += createMatchDetailsTable(details.details, '역배 케이스', false, `${type}-yeokbae-details`);
-                summaryContainer.html(summaryHtml);
-                detailsContainer.html('');
-            }
-        }
-        detailsRow.slideToggle();
+        summaryContainer.innerHTML = summaryHtml;
+        detailsContainer.innerHTML = ''; // 기존 detailsContainer는 비워둠
+    } else if (!forceUpdate) {
+        detailsRow.style.display = 'none';
     }
 }
 
 // 매치 상세 정보 토글 함수 추가
 function toggleMatchDetails(containerId) {
-    const container = $(`#${containerId}`); // Use jQuery selector
-    const button = container.prev().find('.toggle-details-btn'); // Use jQuery prev and find
+    const container = document.getElementById(containerId);
+    const button = container.previousElementSibling.querySelector('.toggle-details-btn');
     
-    container.slideToggle(function() {
-        if (container.is(':visible')) {
-            button.text('닫기');
-        } else {
-            button.text('열기');
-        }
-    });
+    if (container.style.display === 'none') {
+        container.style.display = 'block';
+        button.textContent = '닫기';
+    } else {
+        container.style.display = 'none';
+        button.textContent = '열기';
+    }
 }
 
 function toggleDetails(type) {
