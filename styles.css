@@ -1,14 +1,16 @@
 
         body {
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            background-color: #f8f9fa; /* Light background for body */
+            color: #333; /* Base text color */
         }
         body, html {
             height: 100%;
             margin: 0;
-            font-family: Arial, sans-serif;
+            /* font-family rule is now in the body selector above and will be inherited */
         }
         
         .background-image {
@@ -17,10 +19,10 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: url('./data/boksil.jpeg');
-            background-repeat: repeat;
-            background-size: auto;
-            opacity: 0.3; /* 여기서 투명도를 조절합니다. 0.0은 완전 투명, 1.0은 완전 불투명 */
+            /* background-image: url('./data/boksil.jpeg'); */
+            /* background-repeat: repeat; */
+            /* background-size: auto; */
+            /* opacity: 0.3; */ /* 여기서 투명도를 조절합니다. 0.0은 완전 투명, 1.0은 완전 불투명 */
             z-index: -1;
         }
         
@@ -28,11 +30,16 @@
             position: relative;
             z-index: 1;
             padding: 20px;
-            color: #000; /* 텍스트 색상을 검정으로 설정 */
+            background-color: #ffffff; /* White background for content area */
+            /* color: #000; */ /* Text color is inherited from body or can be set specifically if needed */
         }
         
         h1 {
-            margin-top: 0;
+            font-size: 2.25rem; /* Modern font size */
+            font-weight: 600; /* Slightly bolder */
+            color: #1d1d1f; /* Dark gray, similar to Apple's text color */
+            margin-top: 1rem; /* Adjusted top margin */
+            margin-bottom: 1.5rem; /* Bottom margin for spacing */
         }
         table {
             width: 100%;
@@ -47,22 +54,109 @@
         th {
             background-color: #f2f2f2;
         }
+
+        /* General Input Styling */
+        input[type="text"],
+        input[type="number"],
+        input[type="file"],
+        select {
+            background-color: #ffffff;
+            border: 1px solid #cccccc;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 1rem;
+            color: #333;
+            box-sizing: border-box; /* Ensure padding doesn't affect overall width */
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            margin-bottom: 10px; /* Add some space below inputs */
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="file"]:focus,
+        select:focus {
+            border-color: #007AFF;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
+            outline: none;
+        }
+
+        /* Specific styling for input[type="number"] if needed, but general one is good for now */
         input[type="number"] {
-            width: 100px;
-            padding: 5px;
-            box-sizing: border-box;
+            /* width: 100px; /* Overridden by general input style's flexible width or specific form styles */
+            /* padding: 5px; /* Overridden by general input style */
         }
+
+        /* General Button Styling */
         button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
+            background-color: #f0f0f0; /* Light gray default background */
+            color: #333; /* Dark text for readability */
+            border: 1px solid #cccccc;
+            border-radius: 6px;
+            padding: 10px 15px;
+            font-size: 1rem; /* Consistent font size */
             cursor: pointer;
-            font-size: 16px;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            text-align: center;
         }
+
         button:hover {
-            background-color: #45a049;
+            background-color: #e0e0e0; /* Slightly darker on hover */
+            border-color: #bbbbbb;
         }
+
+        button:focus {
+            outline: none;
+            border-color: #007AFF;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
+        }
+
+        /* Ensure buttons with specific background colors (like green ones) retain their text color if it was white */
+        button[style*="background-color:#4CAF50"],
+        button[style*="background-color: #4CAF50"] /* Check for variations */
+        {
+            color: white; /* Keep text white for these green buttons */
+        }
+        /* This will also affect .results-header button, #searchForm button, #marginSettings button etc. */
+        /* We may need to adjust them if this default is not suitable. */
+
+        /* File Selection Screen */
+        #fileSelectionScreen {
+            margin-bottom: 20px; /* Added spacing */
+            /* Assuming #fileSelectionScreen is a div or section, it might need display:flex or similar if its children are not block elements and need specific alignment. */
+        }
+
+        /* Target the specific button within fileSelectionScreen. Assuming it's the only one or has an ID like #loadFile */
+        /* If the button has a more specific ID like #loadFile, use #loadFile for higher specificity */
+        #fileSelectionScreen button { /* General button inside this section, adjust if too broad */
+            background-color: #007AFF; /* Primary accent color */
+            color: white;
+            border: none; /* Flatter look */
+            padding: 10px 20px; /* Adjusted padding */
+        }
+        #fileSelectionScreen button:hover {
+            background-color: #005ecb; /* Darker shade for hover */
+            color: white; /* Ensure text color remains white on hover */
+        }
+
+        /* Styling for the file input's button part */
+        input[type="file"]#excelFile::file-selector-button {
+            background-color: #e9e9eb; /* Light gray, like a secondary button */
+            color: #333;
+            border: 1px solid #cccccc; /* Keep consistent border */
+            border-radius: 6px; /* Consistent border-radius */
+            padding: 8px 12px; /* Consistent with other inputs */
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+            margin-right: 10px; /* Space between button and text (if any) */
+        }
+
+        input[type="file"]#excelFile::file-selector-button:hover {
+            background-color: #dcdcdc;
+        }
+        /* The actual file input text like "No file chosen" is harder to style directly. */
+        /* The general input[type="file"] style will apply to the overall box. */
+
+
         .excel-table {
             border-collapse: collapse;
             width: 100%;
@@ -115,53 +209,122 @@
             margin-top: 40px;
             margin-bottom: 40px;
         }
+
+        /* League Selection */
         #leagueSelection {
             margin-bottom: 20px;
+            /* Container for toggle and checkboxes */
         }
-        #leagueSelection label {
-            display: inline-block;
-            margin-right: 10px;
-        }
+
         .league-toggle {
             cursor: pointer;
-            user-select: none;
+            user-select: none; /* Kept from original spec */
+            font-size: 1rem; /* Modernized */
+            font-weight: 500; /* Modernized */
+            color: #333; /* Modernized */
+            padding: 10px 15px; /* Consistent padding */
+            border-radius: 6px; /* Consistent border-radius */
+            transition: background-color 0.2s ease;
+            margin-bottom: 0;
+            background-color: #f0f0f0; /* Light background for interactivity indication */
+            border: 1px solid #cccccc; /* Consistent border */
+            display: block; /* Make it block to ensure full width for padding/border */
         }
+
+        .league-toggle:hover {
+            background-color: #e0e0e0; /* Darker on hover */
+        }
+
         .league-checkboxes {
-            display: none;
-            margin-top: 10px;
+            display: none; /* Kept for existing toggle functionality */
+            background-color: #f9f9f9; /* Slightly off-white background */
+            border: 1px solid #cccccc;
+            border-top: none; /* Avoid double border with toggle */
+            border-radius: 0 0 6px 6px; /* Rounded corners at the bottom, matching toggle */
+            padding: 15px;
+            margin-top: 0; /* Align directly below toggle */
+        }
+
+        .league-checkboxes label { /* Styling for labels within the checkbox area */
+            display: block;
+            margin-bottom: 10px; /* Spacing between checkbox lines */
+            font-size: 0.9rem;
+            color: #333;
+            cursor: pointer;
+            line-height: 1.2; /* Ensure sufficient line height */
+        }
+        .league-checkboxes label:last-child {
+            margin-bottom: 0; /* No margin for the last item */
+        }
+
+        .league-checkboxes input[type="checkbox"] {
+            margin-right: 8px;
+            width: 16px;
+            height: 16px;
+            accent-color: #007AFF; /* Modern way to color checkboxes */
+            vertical-align: middle; /* Better alignment with text */
         }
         /* 기존 스타일은 그대로 유지 */
 
+        /* Main Results Table */
+        .results-table {
+            width: 100%;
+            border-collapse: separate; /* Use separate for border-spacing */
+            border-spacing: 0;
+            margin-top: 25px;
+        }
+
+        .results-table th {
+            background-color: #f9f9f9; /* Light gray background */
+            font-weight: 600; /* Semibold */
+            color: #333;
+            padding: 12px 15px;
+            text-align: center; /* Ensure text-align is consistent */
+            border-bottom: 2px solid #e0e0e0; /* Heavier border under headers */
+            border-left: none; /* Remove other borders */
+            border-right: none;
+            border-top: none;
+        }
+        
+        .results-table td {
+            padding: 10px 15px;
+            text-align: center; /* Ensure text-align is consistent */
+            border-bottom: 1px solid #e9e9e9; /* Thin lines between rows */
+            border-left: none; /* Remove other borders */
+            border-right: none;
+            border-top: none;
+            color: #555;
+        }
+
+        /* Remove general border from th, td if it's still applying from a general rule */
+        /* This is handled by setting specific borders above and removing others */
+
+        .results-table tr:hover td {
+            background-color: #f5f5f5; /* Hover effect for rows */
+        }
+
+        /* "상세" (Details) Buttons */
         .detail-button {
-            font-size: 0.8em;
-            padding: 2px 5px;
-            margin-left: 5px;
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            border-radius: 3px;
+            font-size: 0.8rem; /* Slightly adjusted font size */
+            padding: 4px 8px; /* Adjusted padding */
+            background-color: #e9e9eb; /* Consistent secondary button color */
+            color: #333;
+            border: 1px solid #cccccc; /* Consistent border */
+            border-radius: 5px; /* Slightly more rounded */
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.2s ease, border-color 0.2s ease; /* Added border-color transition */
+            margin-left: 5px; /* Keep margin if needed */
         }
 
         .detail-button:hover {
-            background-color: #e0e0e0;
+            background-color: #dcdcdc; /* Consistent hover */
+            border-color: #bbbbbb; /* Add border color change on hover */
         }
 
-        .results-table th,
-        .results-table td {
-            padding: 8px;
-            text-align: center;
-            border: 1px solid #ddd;
-        }
-        
-        .results-table th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-        }
-        
-        /* 높은 값에 대한 색상 스타일 */
+        /* 높은 값에 대한 색상 스타일 - Ensure this is still relevant and visible */
+        /* This rule was inside .results-table context, ensure it remains if needed */
         .results-table td.higher-value {
-            color: white;
+            color: white; /* If text is white, background must provide contrast */
         }
         
         .blue-color {
@@ -174,12 +337,24 @@
             color: white;
         }
 
-        .details-content {
-            max-height: 500px;
-            overflow-y: auto;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-top: 1px solid #ddd;
+        /* Assuming .details-row is the class for the <tr> that contains the .details-content */
+        .results-table .details-row td { /* Higher specificity for TD within results table's details row */
+            padding: 0 !important; /* Remove padding to allow details-content to fill it */
+            border-bottom: 1px solid #e9e9e9; /* Match main table row border */
+            border-left: none;
+            border-right: none;
+            border-top: none; /* Top border handled by details-content or row above */
+        }
+
+        .details-content { /* This is the first occurrence */
+            max-height: 500px; /* Kept */
+            overflow-y: auto; /* Kept */
+            padding: 20px; /* Modernized padding */
+            background-color: #fdfdfd; /* Slightly off-white, distinct from main table rows */
+            /* border-top: 1px solid #e0e0e0; */ /* This was in the old rule, if details-row td handles bottom border, this might not be needed or could be #e0e0e0 */
+            /* The duplicate rule had border-top: 1px solid #ddd; */
+            /* Let's ensure a consistent top border if the row above doesn't suffice */
+            border-top: 1px solid #e0e0e0;
         }
         
         .summary-container {
@@ -231,24 +406,34 @@
             margin-bottom: 10px;
         }
 
-        .details-content h4 {
-            margin-top: 20px;
-            margin-bottom: 10px;
+        /* Sticky header within details content */
+        .details-content h4 { /* This targets h4 within the first .details-content block */
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-top: 0; /* Remove top margin as .details-content has padding */
+            margin-bottom: 15px;
             position: sticky;
             top: 0;
-            background-color: #f9f9f9;
+            background-color: #fdfdfd; /* Match details-content background */
             z-index: 20;
-            padding: 10px 0;
+            padding: 10px 20px; /* Padding to align with content */
+            border-bottom: 1px solid #e0e0e0; /* Separator for sticky header */
+            margin-left: -20px; /* Counteract parent padding */
+            margin-right: -20px; /* Counteract parent padding */
+            width: calc(100% + 40px); /* Ensure full width over parent padding */
         }
 
-
-        .details-content {
+/* Now, find and remove the duplicate .details-content block entirely. */
+/* The search block for removal must be exact. */
+        /* This entire block below will be removed. */
+        /* .details-content {
     max-height: 500px;
     overflow-y: auto;
     padding: 10px;
     background-color: #f9f9f9;
     border-top: 1px solid #ddd;
-}
+} */
 
 .summary-container {
     margin-bottom: 20px;
@@ -258,224 +443,483 @@
     overflow-x: auto;
 }
 
+/* Tables within Details Sections */
 .league-summary,
 .match-details {
-    font-size: 0.9em;
-}
-
-.league-summary th, .league-summary td,
-.match-details th, .match-details td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
+    width: 100%; /* Kept */
+    border-collapse: separate; /* Modernized */
+    border-spacing: 0; /* Modernized */
+    font-size: 0.9rem; /* Slightly adjusted for consistency, was 0.9em */
+    margin-bottom: 20px; /* Kept */
 }
 
 .league-summary th,
 .match-details th {
-    background-color: #f2f2f2;
-    font-weight: bold;
+    background-color: #f0f0f0; /* Slightly different from parent details section */
+    font-weight: 500; /* Modernized */
+    color: #333; /* Consistent text color */
+    padding: 10px 12px; /* Adjusted padding */
+    text-align: center; /* Kept */
+    border-bottom: 1px solid #dcdcdc; /* Clear border */
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    /* position: sticky; top: 0; z-index: 10; are kept from .league-summary th, .match-details th specific rule below */
+}
+
+.league-summary td,
+.match-details td {
+    padding: 8px 12px; /* Adjusted padding */
+    text-align: center; /* Kept */
+    border-bottom: 1px solid #f0f0f0; /* Lighter border for rows */
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    color: #555; /* Consistent text color */
+}
+
+/* Specific sticky styles for headers in these tables were separate, ensure they merge well */
+/* The old selectors were: .league-summary th, .match-details th */
+/* The new .league-summary th, .match-details th selector above covers this. */
+/* Ensure sticky properties are maintained if they were in a more specific rule that's now merged/removed. */
+/* The old rule also had background-color: #f2f2f2; and font-weight: bold; */
+/* These are now background-color: #f0f0f0; and font-weight: 500; */
+/* position: sticky, top: 0, z-index: 10 should be added to the common th rule above if not already there. */
+/* Let's ensure they are: */
+.league-summary th,
+.match-details th {
+    position: sticky; /* Kept for sticky headers */
+    top: 0; /* Kept */
+    z-index: 10; /* Kept */
 }
 
 
-/* 높은 값에 대한 색상 스타일 */
-.league-summary td.higher-value {
-    color: white;
+/* Row Styling - remove or make subtle */
+.league-summary tr:nth-child(even),
+.match-details tr:nth-child(even) {
+    background-color: transparent; /* Removed distracting striping */
 }
 
-.league-summary td.higher-value.blue {
-    background-color: #4a86e8; /* 파란색 */
+.league-summary tr:hover td,
+.match-details tr:hover td {
+    background-color: #f5f5f5; /* Subtle hover for rows */
 }
 
-.league-summary td.higher-value.red {
-    background-color: #e06666; /* 빨간색 */
+/* Total Row Styling */
+.league-summary .total-row td { /* Ensure this selector is specific enough */
+    font-weight: bold; /* Kept */
+    background-color: #e9e9e9 !important; /* Make it stand out, override hover if needed */
+    color: #333; /* Ensure text is dark for readability */
+    border-top: 2px solid #cccccc; /* Stronger top border for separation */
+}
+.league-summary .total-row:hover td {
+    background-color: #e0e0e0 !important; /* Darken total row slightly on hover */
+}
+
+
+/* Color styles review - td.higher-value, .blue-color, .red-color */
+/* td.higher-value was for .results-table, ensure .league-summary td.higher-value works */
+.league-summary td.higher-value, /* This was specific to league-summary */
+.match-details td.higher-value { /* Adding for match-details if applicable */
+    color: white; /* Text color */
+    /* Background is applied by .blue or .red class below */
+}
+
+.league-summary td.higher-value.blue,
+.match-details td.higher-value.blue { /* Adding for match-details */
+    background-color: #4a86e8;
+    color: white; /* Ensure white text on blue background */
+}
+
+.league-summary td.higher-value.red,
+.match-details td.higher-value.red { /* Adding for match-details */
+    background-color: #e06666;
+    color: white; /* Ensure white text on red background */
+}
+
+/* .match-details td[style*="font-weight: bold"] was for blue text, this might be an old way */
+/* If this specific styling is still needed, it should be reviewed for a class-based approach. */
+/* For now, it's left as is, but modernizing would involve classes. */
+
+
+#searchForm {
+    margin-bottom: 20px; /* Add some space below the form */
 }
 
 #searchForm table {
     width: 100%;
     margin-bottom: 10px;
-    border-collapse: collapse;
+    border-collapse: collapse; /* Keep this */
+    border: none; /* Remove table border */
 }
 
+#searchForm th, /* Assuming there might be headers, though example only shows td */
 #searchForm td {
-    padding: 5px;
-    text-align: center;
+    padding: 8px; /* Adequate padding */
+    text-align: left; /* Align text to the left for typical form layout */
+    border: none; /* Remove cell borders */
+}
+#searchForm th {
+    background-color: transparent; /* Remove any th background */
+    font-weight: normal; /* Default th is bold, make it normal if desired or set specific weight */
 }
 
+
+/* Inputs and Selects within Search Form should mostly inherit general styles. */
+/* width: 100% and box-sizing: border-box are good for responsive cells. */
 #searchForm input[type="number"],
 #searchForm select {
     width: 100%;
-    padding: 5px;
-    box-sizing: border-box;
+    /* padding: 5px; */ /* General input styles will provide padding: 8px 12px; */
+    box-sizing: border-box; /* Keep this */
+    /* margin-bottom: 0; */ /* Remove bottom margin if general input style adds it and it's not needed here */
 }
 
-#searchForm button,
-#marginSettings button {
-    padding: 10px 15px;
-    margin-right: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
+/* Buttons in Search Form */
+/* Assuming first button is "검색" and second is "검색 마진 설정" based on typical order or they have IDs */
+/* Let's assume they might need specific IDs for robust targeting: #searchFormSearchButton, #searchFormMarginSettingsButton */
+
+/* Default button style within search form, can be overridden by more specific selectors below */
+#searchForm button {
+    /* General button styles are applied. Override specific properties if needed. */
+    /* font-size: 14px; /* This was specific, general is 1rem. Decide which to keep. Let's keep 1rem for now. */
+    margin-right: 10px; /* Spacing between buttons */
 }
-
-#searchForm button:hover,
-#marginSettings button:hover {
-    background-color: #45a049;
-}
-
-#marginSettings {
-    background-color: #f0f0f0;
-    border: 1px solid #ddd;
-    padding: 15px;
-    margin-top: 20px;
-    border-radius: 5px;
-}
-
-#marginSettings h3 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    color: #333;
-}
-
-#marginSettings h4 {
-    margin-top: 15px;
-    margin-bottom: 10px;
-    color: #444;
-}
-
-#marginSettings div {
-    margin-bottom: 20px;
-}
-
-
-
-#marginSettings button {
-    display: block;
-    margin-top: 20px;
-}
-.boksil-presence {
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-}
-
-.boksil-presence label {
-    margin-right: 10px;
-}
-
-#boksilOpacity {
-    width: 200px;
-}
-
-#marginSettings {
-    background-color: #f0f0f0;
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin-top: 15px;
-    border-radius: 5px;
-    max-width: 400px; /* 전체 너비 제한 */
-}
-
-#marginSettings h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: #333;
-    font-size: 16px;
-}
-
-#marginSettings h4 {
-    margin-top: 10px;
-    margin-bottom: 5px;
-    color: #444;
-    font-size: 14px;
-}
-
-.margin-labels {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 2px;
-}
-
-.margin-labels span {
-    flex: 1;
-    text-align: center;
-    font-weight: bold;
-    font-size: 12px;
-}
-
-.margin-inputs {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 5px;
-}
-
-#marginSettings input[type="number"] {
-    width: calc(33.33% - 3px);
-    padding: 3px;
-    margin-right: 3px;
-    box-sizing: border-box;
-    font-size: 12px;
-}
-
-#marginSettings input[type="number"]:last-child {
+#searchForm button:last-child {
     margin-right: 0;
 }
 
-#marginSettings button {
-    display: block;
-    margin-top: 10px;
-    padding: 5px 10px;
-    background-color: #4CAF50;
+/* "검색" (Search) Button - give it an ID e.g., id="searchButton" in HTML for this */
+#searchForm button.primary-action, /* Or use a class */
+#searchForm button[type="submit"] /* If it's a submit type */ {
+    background-color: #007AFF;
     color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 12px;
-    width: 100%; /* 버튼 너비를 100%로 설정 */
+    border: none; /* General button style has a border, override if primary should be borderless */
+}
+#searchForm button.primary-action:hover,
+#searchForm button[type="submit"]:hover {
+    background-color: #005ecb;
+    color: white; /* Ensure text color remains white */
 }
 
-#marginSettings button:hover {
-    background-color: #45a049;
+/* "검색 마진 설정" (Margin Settings) Button - give it an ID e.g., id="marginSettingsButton" in HTML */
+#searchForm button.secondary-action {
+    background-color: #e9e9eb; /* Secondary button look */
+    color: #333;
+    border: 1px solid #cccccc; /* Consistent with other secondary buttons */
+}
+#searchForm button.secondary-action:hover {
+    background-color: #dcdcdc;
 }
 
-#dateRangeFilter {
-    margin-top: 20px;
-    margin-bottom: 20px;
+
+/* Fallback for existing #searchForm button, #marginSettings button selector if IDs/classes are not used: */
+/* This will style ALL buttons under #searchForm and #marginSettings the same initially. */
+/* The specific button styling above (primary/secondary) should ideally override this. */
+/* This also means #marginSettings button styling will be handled later. */
+#searchForm button { /* This selector was shared with #marginSettings button before */
+    /* General button styles are already applied. */
+    /* The specific background-color: #4CAF50 and color: white are removed in favor of general button or specific primary/secondary */
+    /* padding: 10px 15px; /* from general button */
+    /* margin-right: 10px; /* from general button */
+    /* border: none; /* from original, but general button has one. */
+    /* font-size: 14px; /* from original, general is 1rem. */
+
+    /* If there are two buttons side-by-side and no specific classes/IDs, this is tricky. */
+    /* For now, rely on general button style, and assume specific styles for primary/secondary will be added or are more specific. */
 }
 
-#dateSlider {
-    margin-top: 10px;
+/* Margin Settings Panel - Updated */
+#marginSettings {
+    background-color: #ffffff; /* Modern card background */
+    border: 1px solid #e0e0e0; /* Softer border */
+    border-radius: 8px; /* More rounded corners */
+    padding: 20px; /* Increased padding */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Subtle shadow */
+    margin-top: 15px; /* Adjusted margin from general #searchForm separation */
+    /* max-width: 400px; /* This was in a later #marginSettings block, apply if needed */
+}
+
+#marginSettings h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+#marginSettings h4 {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #555;
+    margin-top: 15px;
     margin-bottom: 10px;
 }
 
-#dateDisplay {
-    text-align: center;
-    font-weight: bold;
+#marginSettings div { /* General div spacing within margin settings */
+    margin-bottom: 15px;
 }
+
+/* Buttons within Margin Settings */
+/* Assuming the main action button is #applyMarginSettings or has .primary-action */
+#marginSettings button#applyMarginSettings,
+#marginSettings button.primary-action {
+    background-color: #007AFF;
+    color: white;
+    border: none;
+    width: 100%;
+    padding: 10px 15px; /* Consistent padding */
+    margin-top: 15px;
+    font-size: 1rem; /* Consistent with general buttons */
+    border-radius: 6px; /* Consistent with general buttons */
+}
+#marginSettings button#applyMarginSettings:hover,
+#marginSettings button.primary-action:hover {
+    background-color: #005ecb;
+    color: white;
+}
+
+/* General button styling for any other buttons directly under #marginSettings */
+#marginSettings button {
+    display: block; /* Keep if this is the desired layout for all buttons */
+    /* margin-top: 20px; /* Overridden by more specific or if only one button */
+    /* Ensure other non-primary buttons get standard styling if they exist */
+}
+
+
+/* Boksil Presence Slider */
+.boksil-presence {
+    display: flex; /* Kept from original */
+    align-items: center; /* Kept from original */
+    margin-bottom: 20px; /* Kept from original */
+}
+
+.boksil-presence label {
+    margin-right: 10px; /* Kept from original */
+    font-size: 0.9rem; /* Modernized */
+    color: #555; /* Modernized */
+}
+
+input[type="range"]#boksilOpacity {
+    width: 200px; /* Kept existing width */
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: #dddddd; /* Track background */
+    border-radius: 2px; /* Track border radius */
+    cursor: pointer;
+    margin-top: 0; /* Reset margin if any was inherited */
+}
+
+input[type="range"]#boksilOpacity::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    cursor: pointer;
+    background: #dddddd;
+    border-radius: 2px;
+}
+
+input[type="range"]#boksilOpacity::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px; /* Thumb width */
+    height: 18px; /* Thumb height */
+    background: #ffffff; /* Thumb background */
+    border-radius: 50%; /* Circular thumb */
+    border: 1px solid #cccccc; /* Thumb border */
+    cursor: pointer;
+    margin-top: -7px; /* (thumb-height - track-height)/2 + border adjustments: (18-4)/2 = 7px */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Thumb shadow */
+}
+
+input[type="range"]#boksilOpacity::-moz-range-track {
+    width: 100%;
+    height: 4px;
+    cursor: pointer;
+    background: #dddddd;
+    border-radius: 2px;
+}
+
+input[type="range"]#boksilOpacity::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: #ffffff;
+    border-radius: 50%;
+    border: 1px solid #cccccc;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+input[type="range"]#boksilOpacity::-ms-track {
+    width: 100%;
+    height: 4px;
+    cursor: pointer;
+    background: transparent; /* IE track needs to be transparent */
+    border-color: transparent;
+    color: transparent;
+}
+
+input[type="range"]#boksilOpacity::-ms-fill-lower {
+    background: #dddddd;
+    border-radius: 2px;
+}
+
+input[type="range"]#boksilOpacity::-ms-fill-upper {
+    background: #dddddd;
+    border-radius: 2px;
+}
+
+input[type="range"]#boksilOpacity::-ms-thumb {
+    width: 18px;
+    height: 18px;
+    background: #ffffff;
+    border-radius: 50%;
+    border: 1px solid #cccccc;
+    cursor: pointer;
+    margin-top: 0px; /* IE thumb aligns differently */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+input[type="range"]#boksilOpacity:focus {
+    outline: none; /* Remove default outline */
+}
+
+input[type="range"]#boksilOpacity:focus::-webkit-slider-thumb {
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3), 0 1px 3px rgba(0,0,0,0.1);
+}
+
+input[type="range"]#boksilOpacity:focus::-moz-range-thumb {
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3), 0 1px 3px rgba(0,0,0,0.1);
+}
+
+input[type="range"]#boksilOpacity:focus::-ms-thumb {
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3), 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* The following #marginSettings block was more specific or a duplicate. */
+/* Styles have been merged into the primary #marginSettings block above. */
+/* Ensure max-width is handled in the main #marginSettings if still desired. */
+/* For example: add max-width: 400px; to the main #marginSettings rule. */
+
+/* Cleaning up the old specific #marginSettings styles that are now handled by the main #marginSettings block or general input/button styles. */
+/* Original .margin-labels and .margin-inputs structures are kept. */
+/* Styling for text inside .margin-labels span: */
+.margin-labels span {
+    flex: 1;
+    text-align: center;
+    font-weight: bold; /* Kept from original */
+    font-size: 0.85rem; /* Updated */
+}
+
+/* Styling for inputs within .margin-inputs */
+#marginSettings .margin-inputs input[type="number"] {
+    width: calc(33.33% - 4px); /* Adjusted for consistent spacing if padding is larger */
+    /* padding: 3px; */ /* General input style padding (8px 12px) will apply. If smaller padding is needed, this requires a more specific class or override. */
+    /* font-size: 12px; */ /* General input style font-size (1rem) will apply. */
+    margin-right: 6px; /* Ensure spacing */
+    box-sizing: border-box;
+}
+#marginSettings .margin-inputs input[type="number"]:last-child {
+    margin-right: 0;
+}
+
+/* Date Range Filters */
+#dateRangeFilter,
 #yearlyDateRangeFilter {
     margin-top: 20px;
     margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
 }
 
+#dateRangeFilter h3, /* Assuming h3 is used for titles, adjust if not */
+#yearlyDateRangeFilter h3 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #333;
+    margin-top: 0; /* Remove top margin if section already has padding */
+    margin-bottom: 15px; /* Increased spacing to slider */
+}
+
+#dateSlider,
 #yearlyDateSlider {
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
+/* jQuery UI Slider Overrides */
+.ui-slider-horizontal { /* Track */
+    height: 4px !important; /* Override jQuery UI inline style */
+    background: #dddddd !important;
+    border-radius: 2px !important;
+    border: none !important;
+}
+
+.ui-slider-horizontal .ui-slider-range { /* Range Highlight */
+    background: #007AFF !important;
+    border-radius: 2px !important;
+}
+
+.ui-slider-horizontal .ui-slider-handle { /* Handle */
+    width: 18px !important;
+    height: 18px !important;
+    background: #ffffff !important;
+    border-radius: 50% !important;
+    border: 1px solid #cccccc !important;
+    cursor: pointer !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+    top: -7px !important; /* Adjust for vertical centering: (track_height - handle_height)/2 - border_width */
+    margin-left: -9px !important; /* Adjust for horizontal centering: -handle_width/2 */
+}
+
+.ui-slider-horizontal .ui-slider-handle:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3), 0 1px 3px rgba(0,0,0,0.1) !important;
+}
+
+#dateDisplay,
 #yearlyDateDisplay {
     text-align: center;
-    font-weight: bold;
+    font-size: 0.9rem; /* Modernized */
+    color: #555; /* Modernized */
+    margin-top: 15px; /* Increased spacing from slider */
+    font-weight: 500; /* Slightly bolder for clarity */
 }
 
-
+/* Odds Selection Radios */
 #oddsSelection {
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 20px; /* Increased margin */
+    margin-bottom: 20px; /* Increased margin */
+    border: 1px solid #e0e0e0; /* Subtle border */
+    padding: 15px; /* Padding inside the container */
+    border-radius: 6px; /* Consistent border-radius */
+    background-color: #f9f9f9; /* Light background for the section */
 }
 
-#oddsSelection label {
-    margin-right: 20px;
+#oddsSelection label { /* Styling for labels within the odds selection area */
+    display: inline-flex; /* Align radio button and text nicely */
+    align-items: center;
+    margin-right: 20px; /* Kept from original */
+    margin-bottom: 8px; /* Spacing if labels wrap to new lines */
+    font-size: 0.9rem; /* Modernized */
+    color: #333; /* Consistent text color */
+    cursor: pointer;
+    line-height: 1.2;
 }
+#oddsSelection label:last-child {
+    margin-right: 0; /* No right margin for the last item in a row */
+}
+
+#oddsSelection input[type="radio"] {
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+    accent-color: #007AFF; /* Modern way to color radio buttons */
+    vertical-align: middle; /* Better alignment with text */
+}
+
 .league-summary .total-row {
     border-top: 2px solid #333;
     background-color: #f0f0f0;
@@ -522,6 +966,8 @@
 .content {
     transition: margin-left 0.3s ease;
     margin-left: 256px; /* 사이드바가 열려있을 때의 여백 */
+    /* Ensure content background is white even with sidebar */
+    background-color: #ffffff;
 }
 
 .content.sidebar-collapsed {
@@ -530,6 +976,158 @@
 
 @media (max-width: 768px) {
     .content {
-        margin-left: 0;
+        margin-left: 0; /* Ensures content uses full width if sidebar is hidden or overlaid */
+        padding: 10px; /* Reduce padding on smaller screens */
+    }
+
+    body {
+        font-size: 14px; /* Base font size for mobile */
+        padding: 10px; /* Reduce body padding */
+    }
+
+    h1 {
+        font-size: 1.8rem; /* Adjust title size */
+        margin-bottom: 1rem;
+    }
+
+    /* General Form Elements Adjustments */
+    input[type="text"],
+    input[type="number"],
+    input[type="file"],
+    select,
+    button {
+        font-size: 0.9rem; /* Adjust font size for form elements */
+        padding: 8px 10px; /* Slightly reduce padding */
+    }
+
+    #fileSelectionScreen button {
+        padding: 8px 15px; /* Adjust specific button padding */
+    }
+
+    /* Search Form Table */
+    #searchForm td {
+        padding: 5px; /* Reduce cell padding */
+    }
+    #searchForm input[type="number"],
+    #searchForm select {
+        font-size: 0.9rem;
+        padding: 6px 8px; /* Smaller padding for inputs in search form */
+    }
+    #searchForm button {
+        padding: 8px 10px; /* Adjust button padding in search form */
+        margin-right: 5px;
+    }
+
+    /* Margin Settings Panel */
+    #marginSettings {
+        padding: 15px; /* Reduce padding of the panel */
+    }
+    #marginSettings .margin-inputs {
+        flex-direction: column; /* Stack inputs vertically */
+    }
+    #marginSettings .margin-inputs input[type="number"] {
+        width: 100%; /* Full width for stacked inputs */
+        margin-bottom: 8px;
+        margin-right: 0; /* Remove right margin */
+    }
+    #marginSettings .margin-inputs input[type="number"]:last-child {
+        margin-bottom: 0;
+    }
+    #marginSettings button#applyMarginSettings,
+    #marginSettings button.primary-action {
+        padding: 8px 12px;
+    }
+
+
+    /* Results Table */
+    .results-table th,
+    .results-table td {
+        padding: 8px 6px; /* Reduce padding */
+        font-size: 0.85rem; /* Reduce font size */
+    }
+    .detail-button {
+        padding: 3px 6px;
+        font-size: 0.75rem;
+    }
+
+    /* Details View Tables */
+    .details-content {
+        padding: 15px; /* Reduce padding for details content */
+    }
+    .details-content h4 { /* Sticky header inside details */
+        font-size: 1rem;
+        padding: 8px 15px; /* Adjust padding */
+        margin-left: -15px; /* Counteract parent padding */
+        margin-right: -15px; /* Counteract parent padding */
+        width: calc(100% + 30px); /* Ensure full width */
+    }
+
+    .league-summary th, .league-summary td,
+    .match-details th, .match-details td {
+        padding: 6px 5px; /* Reduce padding */
+        font-size: 0.8rem; /* Reduce font size */
+    }
+
+    /* Specific Component Adjustments */
+    .league-toggle {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+    .league-checkboxes {
+        padding: 10px;
+    }
+    .league-checkboxes label {
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+    }
+    #oddsSelection {
+        padding: 10px;
+    }
+    #oddsSelection label {
+        font-size: 0.85rem;
+        margin-right: 10px;
+    }
+    #dateRangeFilter, #yearlyDateRangeFilter {
+        padding: 10px;
+    }
+    #dateRangeFilter h3, #yearlyDateRangeFilter h3 {
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+    #dateDisplay, #yearlyDateDisplay {
+        font-size: 0.85rem;
+        margin-top: 10px;
     }
 }
+
+/* React Sidebar Styling */
+#sidebar-root {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+/* Modern scrollbar for Webkit browsers within the sidebar's scrollable area */
+/* The direct child div of #sidebar-root seems to be the main container, and then another div inside handles scrolling */
+#sidebar-root > div > div::-webkit-scrollbar {
+    width: 6px;
+}
+
+#sidebar-root > div > div::-webkit-scrollbar-thumb {
+    background-color: #cccccc;
+    border-radius: 3px;
+}
+
+#sidebar-root > div > div::-webkit-scrollbar-thumb:hover {
+    background-color: #aaaaaa;
+}
+
+#sidebar-root > div > div::-webkit-scrollbar-track {
+    background-color: #f0f0f0; /* Or match sidebar background if different */
+}
+
+/* Ensure buttons within the sidebar with specific inline text colors (like the red "전체 삭제" button) */
+/* are not overridden by the general button style's text color if they use a <button> tag. */
+/* General button style is: color: #333; */
+/* If a sidebar button has an inline style for `color` (e.g., color: '#ef4444') and `background: 'none'`, it should take precedence. */
+/* If general button styles are too aggressive (e.g., setting background that overrides 'none'), */
+/* we might need a specific reset for sidebar buttons, but this is often hard without specific classes. */
+/* For now, we assume inline styles on the React components are specific enough to override generalities. */
